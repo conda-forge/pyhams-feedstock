@@ -44,7 +44,8 @@ requirements:
     - pip
     - numpy
     - setuptools
-    - openblas       # [not win]
+    - libopenblas
+    - openblas
     - mkl            # [win]
     # Conda online help suggests putting these here only
     #- liblapack
