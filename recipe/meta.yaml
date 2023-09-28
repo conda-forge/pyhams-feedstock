@@ -47,12 +47,12 @@ requirements:
     - openblas       # [not win]
     - mkl            # [win]
     # Conda online help suggests putting these here only
-    - liblapack
-    - libblas
+    #- liblapack
+    #- libblas
   run:
     - {{ pin_compatible('numpy') }}
     - python
-    #- libopenblas
+    - libopenblas
     - m2w64-gcc-libgfortran  # [win]
 
 test:
