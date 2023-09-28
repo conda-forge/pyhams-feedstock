@@ -54,6 +54,7 @@ requirements:
     - python
     - libopenblas
     - m2w64-gcc-libgfortran  # [win]
+    - mkl                    # [win]
 
 test:
   imports:
