@@ -10,7 +10,7 @@ source:
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
 
 build:
-  number: 2
+  number: 3
   skip: true  # [py<39]
   script:
     - {{ PYTHON }} -m pip install . --no-deps -vv
@@ -44,7 +44,8 @@ requirements:
     - pip
     - numpy
     - setuptools
-    #- openblas
+    - openblas       # [not win]
+    - mkl            # [win]
     # Conda online help suggests putting these here only
     - liblapack
     - libblas
@@ -53,7 +54,7 @@ requirements:
     - python
     #- libopenblas
     - m2w64-gcc-libgfortran  # [win]
-    
+
 test:
   imports:
     - pyhams
