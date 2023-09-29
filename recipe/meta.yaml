@@ -44,10 +44,9 @@ requirements:
     - pip
     - numpy
     - setuptools
-    - openblas
     # Conda online help suggests putting these here only
-    #- liblapack
-    #- libblas
+    - liblapack
+    - libblas
   run:
     - {{ pin_compatible('numpy') }}
     - python
