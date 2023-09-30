@@ -1,13 +1,13 @@
+c_compiler:
+- vs2019
 channel_sources:
 - conda-forge
 channel_targets:
 - conda-forge main
 fortran_compiler:
-- flang
+- m2w64-gcc-fortran
 fortran_compiler_version:
 - '5'
-m2w64_c_compiler:
-- m2w64-toolchain
 numpy:
 - '1.23'
 openblas:
