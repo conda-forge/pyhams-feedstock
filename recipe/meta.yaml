@@ -13,24 +13,26 @@ build:
   number: 3
   skip: true  # [py<39]
   script:
+    - rm /s /q {{ PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
     - {{ PYTHON }} -m pip install . --no-deps -vv
     - rm -rf {{ SP_DIR }}/meson_build       # [not win]
     - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
-  missing_dso_whitelist:
-    - "*/libgcc_s_seh*.dll"   # [win]
-    - "*/libgfortran*.dll"    # [win]
-    - "*/libggomp*.dll"       # [win]
+  #missing_dso_whitelist:
+  #  - "*/libgcc_s_seh*.dll"   # [win]
+  #  - "*/libgfortran*.dll"    # [win]
+  #  - "*/libgomp*.dll"       # [win]
 
 requirements:
   build:
     - {{ compiler('fortran') }}  # [not win]
     - {{ compiler('c') }}        # [not win]
-    - m2w64-gcc-fortran          # [win]
-    - m2w64-gcc-libgfortran      # [win]
-    - m2w64-gcc                  # [win]
+    #- m2w64-gcc-fortran          # [win]
+    #- m2w64-gcc-libgfortran      # [win]
+    #- m2w64-gcc                  # [win]
+    - {{ compiler('m2w64_c') }}   # [win]
+    - {{ compiler('m2w64_fortran') }}   # [win]
     # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
     # find the right libraries compared to the regular conda version
-    #- {{ compiler('m2w64_c') }}   # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
     - cmake       # [win]
@@ -57,7 +59,7 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
-    #- m2w64-gcc-libgfortran  # [win]
+    - m2w64-gcc-libgfortran  # [win]
 
 test:
   imports:
