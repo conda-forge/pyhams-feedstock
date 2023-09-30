@@ -55,7 +55,7 @@ requirements:
     - libopenblas
     - libgomp                # [win]
     - libglib                # [win]
-    - m2w64-gcc-libgfortran  # [win]
+    #- m2w64-gcc-libgfortran  # [win]
 
 test:
   imports:
