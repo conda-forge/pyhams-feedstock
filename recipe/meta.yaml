@@ -19,9 +19,11 @@ build:
     
 requirements:
   build:
-    - {{ compiler('fortran') }}
-    # gcc is still needed in build process, although don't know why
-    - {{ compiler('c') }}
+    - {{ compiler('fortran') }}  # [not win]
+    - {{ compiler('c') }}        # [not win]
+    - m2w64-gcc-fortran          # [win]
+    - m2w64-gcc-libgfortran      # [win]
+    - m2w64-gcc                  # [win]
     #- {{ compiler('m2w64_c') }}   # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
@@ -49,7 +51,7 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
-    #- m2w64-gcc-libgfortran  # [win]
+    - m2w64-gcc-libgfortran  # [win]
 
 test:
   imports:
