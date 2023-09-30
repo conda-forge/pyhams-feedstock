@@ -25,7 +25,8 @@ build:
 requirements:
   build:
     - {{ compiler('fortran') }}
-    - {{ compiler('c') }}      
+    - {{ compiler('c') }}         # [not win]
+    - {{ compiler('m2w64_c') }}   # [win]
     #- m2w64-gcc-fortran          # [win]
     #- m2w64-gcc-libgfortran      # [win]
     #- m2w64-gcc                  # [win]
@@ -57,7 +58,7 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
-    #- m2w64-gcc-libgfortran  # [win]
+    - m2w64-gcc-libgfortran  # [win]
 
 test:
   imports:
