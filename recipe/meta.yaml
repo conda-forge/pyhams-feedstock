@@ -16,7 +16,11 @@ build:
     - {{ PYTHON }} -m pip install . --no-deps -vv
     - rm -rf {{ SP_DIR }}/meson_build       # [not win]
     - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
-    
+  missing_dso_whitelist:
+    - "*/libgcc_s_seh*.dll"   # [win]
+    - "*/libgfortran*.dll"    # [win]
+    - "*/libggomp*.dll"       # [win]
+
 requirements:
   build:
     - {{ compiler('fortran') }}  # [not win]
@@ -53,8 +57,6 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
-    - libgomp                # [win]
-    - libglib                # [win]
     #- m2w64-gcc-libgfortran  # [win]
 
 test:
