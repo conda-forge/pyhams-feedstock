@@ -24,6 +24,8 @@ requirements:
     - m2w64-gcc-fortran          # [win]
     - m2w64-gcc-libgfortran      # [win]
     - m2w64-gcc                  # [win]
+    # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
+    # find the right libraries compared to the regular conda version
     #- {{ compiler('m2w64_c') }}   # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
@@ -51,6 +53,8 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
+    - libgomp                # [win]
+    - libglib                # [win]
     - m2w64-gcc-libgfortran  # [win]
 
 test:
