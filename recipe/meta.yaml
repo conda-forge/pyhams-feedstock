@@ -24,13 +24,11 @@ build:
 
 requirements:
   build:
-    - {{ compiler('fortran') }}  # [not win]
-    - {{ compiler('c') }}        # [not win]
+    - {{ compiler('fortran') }}
+    - {{ compiler('c') }}      
     #- m2w64-gcc-fortran          # [win]
     #- m2w64-gcc-libgfortran      # [win]
     #- m2w64-gcc                  # [win]
-    - {{ compiler('m2w64_c') }}   # [win]
-    - {{ compiler('m2w64_fortran') }}   # [win]
     # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
     # find the right libraries compared to the regular conda version
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
@@ -59,7 +57,7 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
-    - m2w64-gcc-libgfortran  # [win]
+    #- m2w64-gcc-libgfortran  # [win]
 
 test:
   imports:
