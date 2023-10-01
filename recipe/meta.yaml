@@ -10,19 +10,28 @@ source:
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
 
 build:
-  number: 2
+  number: 3
   skip: true  # [py<39]
   script:
+    - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
     - {{ PYTHON }} -m pip install . --no-deps -vv
     - rm -rf {{ SP_DIR }}/meson_build       # [not win]
     - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
-    
+  #missing_dso_whitelist:
+  #  - "*/libgcc_s_seh*.dll"   # [win]
+  #  - "*/libgfortran*.dll"    # [win]
+  #  - "*/libgomp*.dll"       # [win]
+
 requirements:
   build:
     - {{ compiler('fortran') }}
-    # gcc is still needed in build process, although don't know why
     - {{ compiler('c') }}         # [not win]
     - {{ compiler('m2w64_c') }}   # [win]
+    #- m2w64-gcc-fortran          # [win]
+    #- m2w64-gcc-libgfortran      # [win]
+    #- m2w64-gcc                  # [win]
+    # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
+    # find the right libraries compared to the regular conda version
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
     - cmake       # [win]
@@ -36,6 +45,7 @@ requirements:
     - wheel
     - llvm-openmp  # [osx]
     - libgomp      # [linux]
+    - openblas
   host:
     - cython
     - libpython        # [win]
@@ -45,15 +55,12 @@ requirements:
     - numpy
     - setuptools
     - openblas
-    # Conda online help suggests putting these here only
-    #- liblapack
-    #- libblas
   run:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
     - m2w64-gcc-libgfortran  # [win]
-    
+
 test:
   imports:
     - pyhams
