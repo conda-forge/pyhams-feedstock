@@ -45,6 +45,7 @@ requirements:
     - wheel
     - llvm-openmp  # [osx]
     - libgomp      # [linux]
+    - openblas
   host:
     - cython
     - libpython        # [win]
