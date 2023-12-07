@@ -31,9 +31,6 @@ requirements:
     # addition to "remove" the m2w64 pkg-config before installing
     - {{ compiler('m2w64_c') }}   # [win]
     - {{ compiler('m2w64_fortran') }}   # [win]
-    #- m2w64-gcc-fortran          # [win]
-    #- m2w64-gcc-libgfortran      # [win]
-    #- m2w64-gcc                  # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
     - cmake       # [win]
@@ -45,8 +42,8 @@ requirements:
     - python
     - python-build
     - wheel
-    - llvm-openmp  # [osx]
-    - libgomp      # [linux or win]
+    - llvm-openmp  # [osx or win]
+    - libgomp      # [linux]
     - openblas     # [win]
   host:
     - cython
@@ -58,14 +55,12 @@ requirements:
     - setuptools
     - openblas
     - ucrt  # [win]
-    - libgomp  # [linux or win]
   run:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
     - m2w64-gcc-libgfortran  # [win]
     - ucrt  # [win]
-    - libgomp  # [linux or win]
 
 test:
   imports:
