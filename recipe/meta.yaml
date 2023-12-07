@@ -13,7 +13,7 @@ build:
   number: 4
   skip: true  # [py<39]
   script:
-    - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
+    #- del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
     - {{ PYTHON }} -m pip install . --no-deps -vv
     - rm -rf {{ SP_DIR }}/meson_build       # [not win]
     - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
@@ -24,9 +24,9 @@ build:
 
 requirements:
   build:
-    - {{ compiler('fortran') }}
     - {{ compiler('c') }}
-    #- {{ compiler('fortran') }}   # [not win]
+    - {{ compiler('fortran') }}   # [not win]
+    - {{ compiler('flang') }}      # [win]
     #- {{ compiler('c') }}         # [not win]
     # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
     # find the right libraries compared to the regular conda version.  See above script
