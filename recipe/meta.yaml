@@ -24,10 +24,8 @@ build:
 
 requirements:
   build:
-    - {{ compiler('c') }}
+    - {{ compiler('c') }}         # [not win]
     - {{ compiler('fortran') }}   # [not win]
-    - {{ compiler('flang') }}      # [win]
-    #- {{ compiler('c') }}         # [not win]
     # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
     # find the right libraries compared to the regular conda version.  See above script
     # addition to "remove" the m2w64 pkg-config before installing
@@ -44,7 +42,7 @@ requirements:
     - python
     - python-build
     - wheel
-    - llvm-openmp  # [osx or win]
+    - llvm-openmp  # [osx]
     - libgomp      # [linux]
     - openblas     # [win]
   host:
