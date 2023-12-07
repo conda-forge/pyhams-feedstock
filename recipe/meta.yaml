@@ -43,7 +43,7 @@ requirements:
     - python-build
     - wheel
     - llvm-openmp  # [osx]
-    - libgomp      # [linux]
+    - libgomp      # [linux or win]
     - openblas     # [win]
   host:
     - cython
@@ -55,13 +55,15 @@ requirements:
     - setuptools
     - openblas
     - ucrt  # [win]
+    - libgomp      # [linux or win]
   run:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
-    #- m2w64-gcc-libgfortran  # [win]
-    - libflang  # [win]
+    - libgfortran  # [win]
+    #- libflang  # [win]
     - ucrt  # [win]
+    - libgomp      # [linux or win]
 
 test:
   imports:
