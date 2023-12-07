@@ -31,4 +31,3 @@ zip_keys:
   - fortran_compiler_version
 - - python
   - numpy
-  - channel_sources

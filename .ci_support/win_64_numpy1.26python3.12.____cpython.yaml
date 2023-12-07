@@ -1,5 +1,5 @@
 channel_sources:
-- conda-forge/label/python_rc,conda-forge
+- conda-forge
 channel_targets:
 - conda-forge main
 m2w64_c_compiler:
@@ -21,4 +21,3 @@ target_platform:
 zip_keys:
 - - python
   - numpy
-  - channel_sources
