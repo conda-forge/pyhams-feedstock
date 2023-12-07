@@ -10,7 +10,7 @@ source:
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
 
 build:
-  number: 3
+  number: 4
   skip: true  # [py<39]
   script:
     - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
@@ -46,7 +46,7 @@ requirements:
     - python-build
     - wheel
     - llvm-openmp  # [osx]
-    - libgomp      # [linux]
+    - libgomp      # [linux or win]
     - openblas     # [win]
   host:
     - cython
@@ -57,11 +57,15 @@ requirements:
     - numpy
     - setuptools
     - openblas
+    - ucrt  # [win]
+    - libgomp  # [linux or win]
   run:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
     - m2w64-gcc-libgfortran  # [win]
+    - ucrt  # [win]
+    - libgomp  # [linux or win]
 
 test:
   imports:
