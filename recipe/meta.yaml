@@ -10,7 +10,7 @@ source:
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
 
 build:
-  number: 4
+  number: 5
   skip: true  # [py<39]
   script:
     #- del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
