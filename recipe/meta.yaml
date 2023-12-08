@@ -10,30 +10,25 @@ source:
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
 
 build:
-  number: 3
+  number: 4
   skip: true  # [py<39]
   script:
-    - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
+    #- del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
     - {{ PYTHON }} -m pip install . --no-deps -vv
     - rm -rf {{ SP_DIR }}/meson_build       # [not win]
     - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
   #missing_dso_whitelist:
-  #  - "*/libgcc_s_seh*.dll"   # [win]
   #  - "*/libgfortran*.dll"    # [win]
-  #  - "*/libgomp*.dll"       # [win]
 
 requirements:
   build:
-    - {{ compiler('fortran') }}   # [not win]
     - {{ compiler('c') }}         # [not win]
+    - {{ compiler('fortran') }}   # [not win]
     # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
     # find the right libraries compared to the regular conda version.  See above script
     # addition to "remove" the m2w64 pkg-config before installing
-    - {{ compiler('m2w64_c') }}   # [win]
-    - {{ compiler('m2w64_fortran') }}   # [win]
-    #- m2w64-gcc-fortran          # [win]
-    #- m2w64-gcc-libgfortran      # [win]
-    #- m2w64-gcc                  # [win]
+    #- {{ compiler('m2w64_c') }}   # [win]
+    #- {{ compiler('m2w64_fortran') }}   # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
     - cmake       # [win]
@@ -46,7 +41,7 @@ requirements:
     - python-build
     - wheel
     - llvm-openmp  # [osx]
-    - libgomp      # [linux]
+    - libgomp      # [linux or win]
     - openblas     # [win]
   host:
     - cython
@@ -57,11 +52,14 @@ requirements:
     - numpy
     - setuptools
     - openblas
+    - libgomp      # [linux or win]
   run:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
-    - m2w64-gcc-libgfortran  # [win]
+    - libgfortran  # [win]
+    - libgcc       # [win]
+    - libgomp      # [linux or win]
 
 test:
   imports:
