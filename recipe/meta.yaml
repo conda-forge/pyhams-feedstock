@@ -30,7 +30,7 @@ requirements:
     #- {{ compiler('m2w64_c') }}   # [win]
     #- {{ compiler('m2w64_fortran') }}   # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
-    - flang >= 17.0  # [win]
+    - flang >=17.0  # [win]
     # Cmake is needed to help find libraries on windows
     - cmake       # [win]
     - meson
@@ -60,7 +60,7 @@ requirements:
     - libopenblas
     #- libgfortran  # [win]
     #- libgcc       # [win]
-    - libflang >= 17.0   # [win]
+    - libflang >=17.0   # [win]
     #- libgomp      # [linux or win]
 
 test:
