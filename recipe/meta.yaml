@@ -18,9 +18,7 @@ build:
     - rm -rf {{ SP_DIR }}/meson_build       # [not win]
     - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
   #missing_dso_whitelist:
-  #  - "*/libgcc_s_seh*.dll"   # [win]
   #  - "*/libgfortran*.dll"    # [win]
-  #  - "*/libgomp*.dll"       # [win]
 
 requirements:
   build:
@@ -54,15 +52,13 @@ requirements:
     - numpy
     - setuptools
     - openblas
-    - ucrt  # [win]
     - libgomp      # [linux or win]
   run:
     - {{ pin_compatible('numpy') }}
     - python
     - libopenblas
     - libgfortran  # [win]
-    #- libflang  # [win]
-    - ucrt  # [win]
+    - libgcc       # [win]
     - libgomp      # [linux or win]
 
 test:
