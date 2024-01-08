@@ -1,4 +1,4 @@
-{% set version = "1.2.1" %}
+{% set version = "1.2.3" %}
 
 package:
   name: pyhams
@@ -6,17 +6,15 @@ package:
 
 source:
   url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
-  sha256: 7d72a30cfb13be162c5aa2cea0e053ea82f5b0f638242f66452dc0dab454678e
+  sha256: a457a3510dc5dcdf37c7e00564c18b3e26b37d000af09c7697536832dbc60052
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
 
 build:
-  number: 6
+  number: 0
   skip: true  # [py<39]
   script:
     - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
     - {{ PYTHON }} -m pip install . --no-deps -vv
-    - rm -rf {{ SP_DIR }}/meson_build       # [not win]
-    - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
   #missing_dso_whitelist:
   #  - "*/libgfortran*.dll"    # [win]
 
@@ -33,13 +31,12 @@ requirements:
     # find the right libraries compared to the regular conda version.  See above script
     # addition to "remove" the m2w64 pkg-config before installing
     - {{ compiler('m2w64_c') }}         # [win]
-    #- {{ compiler('m2w64_fortran') }}   # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
     - cmake       # [win]
     - meson
+    - meson-python
     - ninja
-    - numpy
     - pip
     - pkg-config
     - python
@@ -55,12 +52,15 @@ requirements:
     - python-build
     - pip
     - numpy
-    - setuptools
     - openblas
+    - meson
+    - meson-python
+    - ninja
     #- libgomp      # [linux or win]
   run:
     - {{ pin_compatible('numpy') }}
     - python
+    - ninja
     - libopenblas
     - m2w64-gcc-libgfortran  # [win]
     #- libgomp      # [linux or win]
