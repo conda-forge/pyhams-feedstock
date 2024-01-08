@@ -15,8 +15,6 @@ build:
   script:
     - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
     - {{ PYTHON }} -m pip install . --no-deps -vv
-  #  - rm -rf {{ SP_DIR }}/meson_build       # [not win]
-  #  - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
   #missing_dso_whitelist:
   #  - "*/libgfortran*.dll"    # [win]
 
@@ -33,14 +31,12 @@ requirements:
     # find the right libraries compared to the regular conda version.  See above script
     # addition to "remove" the m2w64 pkg-config before installing
     - {{ compiler('m2w64_c') }}         # [win]
-    #- {{ compiler('m2w64_fortran') }}   # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
     - cmake       # [win]
     - meson
     - meson-python
     - ninja
-    - numpy
     - pip
     - pkg-config
     - python
@@ -64,7 +60,6 @@ requirements:
   run:
     - {{ pin_compatible('numpy') }}
     - python
-    - meson
     - ninja
     - libopenblas
     - m2w64-gcc-libgfortran  # [win]
