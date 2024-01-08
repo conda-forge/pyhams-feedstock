@@ -14,9 +14,7 @@ build:
   skip: true  # [py<39]
   script:
     - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
-  #  - {{ PYTHON }} -m build -n -x -w .
-  #  - {{ PYTHON }} -m pip install --no-deps -v dist/*.whl
-  - {{ PYTHON }} -m pip install . --no-deps -vv
+    - {{ PYTHON }} -m pip install . --no-deps -vv
   #  - rm -rf {{ SP_DIR }}/meson_build       # [not win]
   #  - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
   #missing_dso_whitelist:
