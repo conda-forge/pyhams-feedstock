@@ -10,12 +10,12 @@ source:
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
 
 build:
-  number: 1
+  number: 2
   skip: true  # [py<39]
   script:
     - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
     - {{ PYTHON }} -m build -n -x -w .
-    - {{ PYTHON }} -m pip install --prefix {{ BUILD_PREFIX }} --no-deps --no-index -v --find-links dist pyhams
+    - {{ PYTHON }} -m pip install --no-deps -v --find-links dist pyhams
     #- {{ PYTHON }} -m pip install . --no-deps -vv
     - rm -rf {{ SP_DIR }}/meson_build       # [not win]
     - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
