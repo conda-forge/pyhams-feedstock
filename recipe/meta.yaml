@@ -1,4 +1,4 @@
-{% set version = "1.2.2" %}
+{% set version = "1.2.3" %}
 
 package:
   name: pyhams
@@ -6,18 +6,17 @@ package:
 
 source:
   url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
-  sha256: 43998f7f0e431b256e87890fd1c9cb31118e4da3c64d2d2962534a2840bf973e
+  sha256: a457a3510dc5dcdf37c7e00564c18b3e26b37d000af09c7697536832dbc60052
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
 
 build:
-  number: 4
+  number: 0
   skip: true  # [py<39]
-  skip: true  # [not linux]
-  #script:
-  #  - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
+  script:
+    - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
   #  - {{ PYTHON }} -m build -n -x -w .
   #  - {{ PYTHON }} -m pip install --no-deps -v dist/*.whl
-  #  #- {{ PYTHON }} -m pip install . --no-deps -vv
+  - {{ PYTHON }} -m pip install . --no-deps -vv
   #  - rm -rf {{ SP_DIR }}/meson_build       # [not win]
   #  - rmdir /s /q {{ SP_DIR }}\meson_build  # [win]
   #missing_dso_whitelist:
@@ -41,6 +40,7 @@ requirements:
     # Cmake is needed to help find libraries on windows
     - cmake       # [win]
     - meson
+    - meson-python
     - ninja
     - numpy
     - pip
@@ -58,12 +58,16 @@ requirements:
     - python-build
     - pip
     - numpy
-    - setuptools
     - openblas
+    - meson
+    - meson-python
+    - ninja
     #- libgomp      # [linux or win]
   run:
     - {{ pin_compatible('numpy') }}
     - python
+    - meson
+    - ninja
     - libopenblas
     - m2w64-gcc-libgfortran  # [win]
     #- libgomp      # [linux or win]
