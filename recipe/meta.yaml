@@ -14,8 +14,9 @@ build:
   skip: true  # [py<39]
   script:
     - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
-    - echo "python = '${PREFIX}/bin/python'" >> ${CONDA_PREFIX}/meson_cross_file.txt
-    - export MESON_ARGS="${MESON_ARGS} -Dpython_target=${PYTHON} --cross-file $BUILD_PREFIX/meson_cross_file.txt"  # [build_platform != target_platform]
+    - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [osx]
+    - export MESON_ARGS="${MESON_ARGS} -Dpython_target=${PYTHON}"  # [osx]
+    - export MESON_ARGS="${MESON_ARGS} --cross-file $BUILD_PREFIX/meson_cross_file.txt"  # [build_platform != target_platform]
     - {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
@@ -28,8 +29,9 @@ requirements:
     - {{ compiler('m2w64_c') }}         # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     - python                                  # [build_platform != target_platform]
-    - meson-python                            # [build_platform != target_platform]
-    - ninja                                   # [build_platform != target_platform]
+    - meson-python
+    - meson
+    - ninja
     - pkg-config
     # Cmake is needed to help find libraries on windows
     - cmake         # [win]
