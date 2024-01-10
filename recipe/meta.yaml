@@ -10,46 +10,35 @@ source:
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<39]
   script:
     - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
     - {{ PYTHON }} -m pip install . --no-deps -vv
-  #missing_dso_whitelist:
-  #  - "*/libgfortran*.dll"    # [win]
 
 requirements:
   build:
     - {{ compiler('c') }}    # [not win]
     - {{ compiler('fortran') }}
-    # use flang as fortran compiler on windows (uses clang driver)
-    #- clang                                  # [win]
-    #- flang                                  # [win]
-    # use llvm linker for both of the above
-    #- lld                                    # [win]
     # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
     # find the right libraries compared to the regular conda version.  See above script
     # addition to "remove" the m2w64 pkg-config before installing
     - {{ compiler('m2w64_c') }}         # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
+    - python                                  # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
-    - cmake       # [win]
+    - cmake         # [win]
     - meson
     - meson-python
     - ninja
-    - pip
     - pkg-config
-    - python
-    - python-build
-    - wheel
-    - llvm-openmp  # [osx]
+    - llvm-openmp   # [osx]
     #- libgomp      # [linux or win]
-    - openblas     # [win]
+    - openblas      # [win]
   host:
     - cython
     - libpython        # [win]
     - python
-    - python-build
     - pip
     - numpy
     - openblas
