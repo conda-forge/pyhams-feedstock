@@ -33,6 +33,7 @@ requirements:
     - meson
     - ninja
     - pkg-config
+    - numpy
     # Cmake is needed to help find libraries on windows
     - cmake         # [win]
     - llvm-openmp   # [osx]
