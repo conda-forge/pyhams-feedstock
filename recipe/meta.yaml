@@ -14,6 +14,7 @@ build:
   skip: true  # [py<39]
   script:
     - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
+    - echo "python = '${PREFIX}/bin/python'" >> ${CONDA_PREFIX}/meson_cross_file.txt  # [osx]
     - {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
