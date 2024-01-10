@@ -26,12 +26,11 @@ requirements:
     - {{ compiler('m2w64_c') }}         # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     - python                                  # [build_platform != target_platform]
-    # Cmake is needed to help find libraries on windows
-    - cmake         # [win]
-    - meson                                   # [build_platform != target_platform]
     - meson-python                            # [build_platform != target_platform]
     - ninja                                   # [build_platform != target_platform]
     - pkg-config
+    # Cmake is needed to help find libraries on windows
+    - cmake         # [win]
     - llvm-openmp   # [osx]
     #- libgomp      # [linux or win]
     - openblas      # [win]
