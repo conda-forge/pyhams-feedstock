@@ -29,7 +29,7 @@ requirements:
     # Cmake is needed to help find libraries on windows
     - cmake         # [win]
     - meson                                   # [build_platform != target_platform]
-    - meson-python
+    - meson-python                            # [build_platform != target_platform]
     - ninja
     - pkg-config
     - llvm-openmp   # [osx]
