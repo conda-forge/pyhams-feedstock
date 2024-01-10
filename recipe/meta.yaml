@@ -43,6 +43,7 @@ requirements:
     - libpython        # [win]
     - python
     - pip
+    - python-build
     - numpy
     - openblas
     - meson
