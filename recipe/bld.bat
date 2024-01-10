@@ -20,11 +20,12 @@ REM -wnx flags mean: --wheel --no-isolation --skip-dependency-check
 %PYTHON% -m build -w -n -x .
 if %ERRORLEVEL% neq 0 (type builddir\meson-logs\meson-log.txt && exit 1)
 
+%PYTHON% -m pip install dist\py*.whl
 REM `pip install dist\numpy*.whl` does not work on windows,
 REM so use a loop; there's only one wheel in dist/ anyway
-for /f %%f in ('dir /b /S .\dist') do (
-    REM need to use force to reinstall the tests the second time
-    REM (otherwise pip thinks the package is installed already)
-    pip install %%f --force-reinstall
-    if %ERRORLEVEL% neq 0 exit 1
-)
+REM for /f %%f in ('dir /b /S .\dist') do (
+REM     REM need to use force to reinstall the tests the second time
+REM     REM (otherwise pip thinks the package is installed already)
+REM     pip install %%f --force-reinstall
+REM     if %ERRORLEVEL% neq 0 exit 1
+REM )
