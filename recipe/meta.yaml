@@ -31,7 +31,7 @@ requirements:
     - meson                                   # [build_platform != target_platform]
     - meson-python                            # [build_platform != target_platform]
     - ninja                                   # [build_platform != target_platform]
-    - pkg-config                              # [build_platform != target_platform]
+    - pkg-config
     - llvm-openmp   # [osx]
     #- libgomp      # [linux or win]
     - openblas      # [win]
