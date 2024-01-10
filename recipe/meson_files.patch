@@ -89,10 +89,10 @@ index a768c27..3b93898 100644
 +#    a Python installation in a virtual environment. Leave as an empty string to build for Python installation running
 +#    Meson.''')
 diff --git a/pyhams/meson.build b/pyhams/meson.build
-index 161294f..549253c 100644
+index 161294f..a567087 100644
 --- a/pyhams/meson.build
 +++ b/pyhams/meson.build
-@@ -1,13 +1,29 @@
+@@ -1,13 +1,13 @@
  # NumPy include directory - needed in all submodules
 -incdir_numpy = get_option('incdir_numpy')
 -if incdir_numpy == ''
@@ -106,28 +106,12 @@ index 161294f..549253c 100644
 +incdir_numpy = meson.get_external_property('numpy-include-dir', 'not-given')
 +if incdir_numpy == 'not-given'
 +  incdir_numpy = run_command(py3,
-+    [
-+      '-c',
-+      '''import os
-+os.chdir(os.path.join("..", "tools"))
-+import numpy as np
-+try:
-+  incdir = os.path.relpath(np.get_include())
-+except Exception:
-+  incdir = np.get_include()
-+print(incdir)
-+  '''
-+    ],
-+    check: true
-+  ).stdout().strip()
-+
-+  # We do need an absolute path to feed to `cc.find_library` below
-+  _incdir_numpy_abs = run_command(py3,
-+    ['-c', 'import os; os.chdir(".."); import numpy; print(numpy.get_include())'],
-+    check: true
-+  ).stdout().strip()
-+else
-+  _incdir_numpy_abs = incdir_numpy
++                             [
++                               '-c',
++                               'import os; os.chdir(".."); import numpy; print(numpy.get_include())'
++                             ],
++                             check: true
++                            ).stdout().strip()
  endif
  # this creates a raw string which is useful for Windows use of '\' for paths
  incdir_numpy = '''@0@'''.format(incdir_numpy)
