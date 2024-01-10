@@ -28,7 +28,7 @@ requirements:
     - python                                  # [build_platform != target_platform]
     # Cmake is needed to help find libraries on windows
     - cmake         # [win]
-    - meson
+    - meson                                   # [build_platform != target_platform]
     - meson-python
     - ninja
     - pkg-config
