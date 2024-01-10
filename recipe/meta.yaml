@@ -8,15 +8,15 @@ source:
   url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
   sha256: a457a3510dc5dcdf37c7e00564c18b3e26b37d000af09c7697536832dbc60052
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
+  patches:
+    - meson_files.patch
 
 build:
   number: 1
   skip: true  # [py<39]
   script:
     - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
-    - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [osx]
-    - export MESON_ARGS="${MESON_ARGS} -Dpython_target=${PYTHON}"  # [osx]
-    - export MESON_ARGS="${MESON_ARGS} --cross-file $BUILD_PREFIX/meson_cross_file.txt"  # [build_platform != target_platform]
+    - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
     - {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
