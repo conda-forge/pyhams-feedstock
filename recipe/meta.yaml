@@ -8,49 +8,43 @@ source:
   url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
   sha256: a457a3510dc5dcdf37c7e00564c18b3e26b37d000af09c7697536832dbc60052
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
+  patches:
+    - meson_files.patch
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<39]
-  script:
-    - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
-    - {{ PYTHON }} -m pip install . --no-deps -vv
-  #missing_dso_whitelist:
-  #  - "*/libgfortran*.dll"    # [win]
+  #script:
+  #  - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
+  #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
+  #  - {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
   build:
     - {{ compiler('c') }}    # [not win]
     - {{ compiler('fortran') }}
-    # use flang as fortran compiler on windows (uses clang driver)
-    #- clang                                  # [win]
-    #- flang                                  # [win]
-    # use llvm linker for both of the above
-    #- lld                                    # [win]
     # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
     # find the right libraries compared to the regular conda version.  See above script
     # addition to "remove" the m2w64 pkg-config before installing
     - {{ compiler('m2w64_c') }}         # [win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
-    # Cmake is needed to help find libraries on windows
-    - cmake       # [win]
-    - meson
+    - python                                  # [build_platform != target_platform]
     - meson-python
+    - meson
     - ninja
-    - pip
     - pkg-config
-    - python
-    - python-build
-    - wheel
-    - llvm-openmp  # [osx]
+    - numpy
+    # Cmake is needed to help find libraries on windows
+    - cmake         # [win]
+    - llvm-openmp   # [osx]
     #- libgomp      # [linux or win]
-    - openblas     # [win]
+    - openblas      # [win]
   host:
     - cython
     - libpython        # [win]
     - python
-    - python-build
     - pip
+    - python-build
     - numpy
     - openblas
     - meson

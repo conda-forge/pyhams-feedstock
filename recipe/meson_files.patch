@@ -1,0 +1,117 @@
+diff --git a/.github/workflows/CI_pyHAMS.yml b/.github/workflows/CI_pyHAMS.yml
+index ec93b0d..a11089e 100644
+--- a/.github/workflows/CI_pyHAMS.yml
++++ b/.github/workflows/CI_pyHAMS.yml
+@@ -37,7 +37,7 @@ jobs:
+               if: contains( matrix.os, 'windows')
+               run: |
+                   #vcpkg install openblas
+-                  #pacman -S mingw-w64-x86_64-openblas64
++                  pacman -S mingw-w64-x86_64-openblas64 mingw-w64-lapack
+                   #'${{ steps.cp.outputs.python-path }}' -m pip install pylib-openblas
+                   
+             - name: Mac openblas
+diff --git a/environment.yml b/environment.yml
+index 0bd93b3..071aed6 100644
+--- a/environment.yml
++++ b/environment.yml
+@@ -5,6 +5,7 @@ channels:
+ dependencies:
+   - cmake
+   - meson
++  - meson-python
+   - ninja
+   - numpy
+   - openblas
+@@ -12,4 +13,3 @@ dependencies:
+   - pip
+   - pkg-config
+   - python
+-  - setuptools
+diff --git a/meson.build b/meson.build
+index 43312f9..48f8309 100644
+--- a/meson.build
++++ b/meson.build
+@@ -27,16 +27,15 @@ endif
+ 
+ # Adding at project level causes many spurious -lgfortran flags.
+ _fflags = []
+-if fc.get_id() == 'gcc'
+-  _fflags = fc.get_supported_arguments('-fdec-math')
+-  _fflags += fc.get_supported_arguments('-fno-align-commons')
+-endif
+-if fc.get_id() == 'intel'
++if fc.get_id() in ['intel', 'intel-llvm']
+   _fflags = fc.get_supported_arguments('-qmkl')
+-elif fc.get_id() == 'intel-cl'
++elif fc.get_id() in ['intel-cl', 'intel-llvm-cl']
+   # Intel Fortran on Windows does things differently, so deal with that
+   # (also specify dynamic linking and the right name mangling)
+   _fflags = fc.get_supported_arguments('/qmkl')
++else
++  _fflags = fc.get_supported_arguments('-fdec-math')
++  _fflags += fc.get_supported_arguments('-fno-align-commons')
+ endif
+ add_project_arguments(_fflags, language: 'fortran')
+ 
+@@ -59,12 +58,7 @@ lapack = dependency('openblas', 'mkl_rt', 'blas', 'lapack', required: true)
+ # https://mesonbuild.com/Python-module.html
+ # Here we differentiate from the python used by meson, py3_command, and that python target, py3_target. This is useful
+ # when cross compiling like on conda-forge
+-py_mod = import('python')
+-if get_option('python_target') != ''
+-  py3 = py_mod.find_installation(get_option('python_target'))
+-else
+-  py3 = py_mod.find_installation('python')
+-endif
++py3 = import('python').find_installation(pure: false)
+ py3_dep = py3.dependency()
+ 
+ message(py3.path())
+diff --git a/meson_options.txt b/meson_options.txt
+index a768c27..3b93898 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -1,9 +1,9 @@
+ option('incdir_numpy', type: 'string', value: '',
+     description: 'Include directory for numpy. If left empty Meson will try to find it on its own.')
+ 
+-option('python_target', type: 'string', value: '',
+-    description: '''Target python path. This is used in the case that the Python installation that PyOptSparse is intended
+-    to be built for is different than the Python installation that is used to run Meson. For example, Meson may be installed
+-    on the user's system which is run using the system Python installation, but the user may want build PyOptSparse for
+-    a Python installation in a virtual environment. Leave as an empty string to build for Python installation running
+-    Meson.''')
++#option('python_target', type: 'string', value: '',
++#    description: '''Target python path. This is used in the case that the Python installation that PyOptSparse is intended
++#    to be built for is different than the Python installation that is used to run Meson. For example, Meson may be installed
++#    on the user's system which is run using the system Python installation, but the user may want build PyOptSparse for
++#    a Python installation in a virtual environment. Leave as an empty string to build for Python installation running
++#    Meson.''')
+diff --git a/pyhams/meson.build b/pyhams/meson.build
+index 161294f..a567087 100644
+--- a/pyhams/meson.build
++++ b/pyhams/meson.build
+@@ -1,13 +1,13 @@
+ # NumPy include directory - needed in all submodules
+-incdir_numpy = get_option('incdir_numpy')
+-if incdir_numpy == ''
+-    incdir_numpy = run_command(py3,
+-      [
+-        '-c',
+-        'import os; os.chdir(".."); import numpy; print(numpy.get_include())'
+-      ],
+-      check: true
+-    ).stdout().strip()
++incdir_numpy = meson.get_external_property('numpy-include-dir', 'not-given')
++if incdir_numpy == 'not-given'
++  incdir_numpy = run_command(py3,
++                             [
++                               '-c',
++                               'import os; os.chdir(".."); import numpy; print(numpy.get_include())'
++                             ],
++                             check: true
++                            ).stdout().strip()
+ endif
+ # this creates a raw string which is useful for Windows use of '\' for paths
+ incdir_numpy = '''@0@'''.format(incdir_numpy)
