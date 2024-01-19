@@ -66,9 +66,9 @@ test:
   requires:
     - pytest
   source_files:
-    - test
+    - test  # [ not win ]
   commands:
-    - "cd test; pytest .; cd ..;"
+    - "cd test; pytest .; cd ..;"  # [ not win ]
 
 
 about:
