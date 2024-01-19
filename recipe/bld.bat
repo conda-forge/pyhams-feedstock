@@ -5,9 +5,9 @@ REM Set a few environment variables that are not set due to
 REM https://github.com/conda/conda-build/issues/3993
 set PIP_NO_BUILD_ISOLATION=True
 set PIP_NO_DEPENDENCIES=True
-set PIP_IGNORE_INSTALLED=True
-set PIP_NO_INDEX=True
-set PYTHONDONTWRITEBYTECODE=True
+REM set PIP_IGNORE_INSTALLED=True
+REM set PIP_NO_INDEX=True
+REM set PYTHONDONTWRITEBYTECODE=True
 
 REM see explanation here:
 REM https://github.com/conda-forge/scipy-feedstock/pull/253#issuecomment-1732578945

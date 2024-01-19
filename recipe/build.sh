@@ -3,9 +3,9 @@ set -ex
 
 export PIP_NO_BUILD_ISOLATION=True
 export PIP_NO_DEPENDENCIES=True
-export PIP_IGNORE_INSTALLED=True
-export PIP_NO_INDEX=True
-export PYTHONDONTWRITEBYTECODE=True
+#export PIP_IGNORE_INSTALLED=True
+#export PIP_NO_INDEX=True
+#export PYTHONDONTWRITEBYTECODE=True
 
 # HACK: extend $CONDA_PREFIX/meson_cross_file that's created in
 # https://github.com/conda-forge/ctng-compiler-activation-feedstock/blob/main/recipe/activate-gcc.sh
