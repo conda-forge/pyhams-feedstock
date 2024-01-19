@@ -1,5 +1,5 @@
 diff --git a/pyhams/meson.build b/pyhams/meson.build
-index a567087..27dcda4 100644
+index a567087..28280fa 100644
 --- a/pyhams/meson.build
 +++ b/pyhams/meson.build
 @@ -23,43 +23,42 @@ fortranobject_c = incdir_f2py / 'fortranobject.c'
@@ -42,7 +42,7 @@ index a567087..27dcda4 100644
 +                'src/SolveMotion.f90',
 +                'src/WavDynSubs.f90',
 +                'src/HAMS_Prog.f90',
-+               ],
++               ]
  
  # Source order is important for dependencies
  py3.extension_module('_hams',
