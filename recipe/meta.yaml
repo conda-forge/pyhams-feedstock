@@ -1,4 +1,4 @@
-{% set version = "1.2.5" %}
+{% set version = "1.2.6" %}
 
 package:
   name: pyhams
@@ -6,7 +6,7 @@ package:
 
 source:
   url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
-  sha256: 20a9e9f4d5c1cbccb7fac7441320eb0250d856bf0935691756c1bd2b1cae74c7
+  sha256: 28d1b347a4f2ae287a87fdcec5ea69ff05d53e6cb1cfe32efdc4ca74dd21b6c7
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
   #patches:
   #  - meson_files.patch
@@ -63,11 +63,13 @@ test:
   imports:
     - pyhams
     - pyhams.pyhams
-  #requires:
-  #  - pip
-  #commands:
-  #  - cd test
-  #  - pytest .
+  requires:
+    - pytest
+  source_files:
+    - test  # [ not win ]
+  commands:
+    - "cd test; pytest .; cd ..;"  # [ not win ]
+
 
 about:
   home: https://github.com/WISDEM/pyHAMS
