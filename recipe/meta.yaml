@@ -8,25 +8,20 @@ source:
   url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
   sha256: 28d1b347a4f2ae287a87fdcec5ea69ff05d53e6cb1cfe32efdc4ca74dd21b6c7
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
-  #patches:
-  #  - meson_files.patch
+  patches:
+    - meson_files.patch
 
 build:
   number: 0
   skip: true  # [py<39]
   #script:
-  #  - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
   #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
   #  - {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
   build:
-    - {{ compiler('c') }}    # [not win]
-    - {{ compiler('fortran') }}
-    # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
-    # find the right libraries compared to the regular conda version.  See above script
-    # addition to "remove" the m2w64 pkg-config before installing
-    - {{ compiler('m2w64_c') }}         # [win]
+    - {{ compiler('c') }}
+    - {{ compiler('fortran') }}               # [not win]
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     - python                                  # [build_platform != target_platform]
     - meson-python
@@ -34,14 +29,19 @@ requirements:
     - ninja
     - pkg-config
     - numpy
+    # pythran code needs clang-cl on windows
+    - clang                                  # [win]
+    # use flang as fortran compiler on windows (uses clang driver)
+    - flang                                  # [win]
+    # use llvm linker for both of the above
+    - lld                                    # [win]    
     # Cmake is needed to help find libraries on windows
     - cmake         # [win]
-    - llvm-openmp   # [osx]
-    #- libgomp      # [linux or win]
+    - llvm-openmp
     - openblas      # [win]
   host:
+    - compiler-rt                            # [win]
     - cython
-    - libpython        # [win]
     - python
     - pip
     - python-build
@@ -50,14 +50,13 @@ requirements:
     - meson
     - meson-python
     - ninja
-    #- libgomp      # [linux or win]
+    - llvm-openmp
   run:
     - {{ pin_compatible('numpy') }}
     - python
     - ninja
     - libopenblas
-    - m2w64-gcc-libgfortran  # [win]
-    #- libgomp      # [linux or win]
+    - llvm-openmp
 
 test:
   imports:
