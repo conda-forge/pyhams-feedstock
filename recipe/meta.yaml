@@ -22,6 +22,9 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('fortran') }}               # [not win]
+    - clang                                   # [win]
+    - flang                                   # [win]
+    - lld                                     # [win]    
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     - python                                  # [build_platform != target_platform]
     - meson-python
@@ -29,15 +32,9 @@ requirements:
     - ninja
     - pkg-config
     - numpy
-    # pythran code needs clang-cl on windows
-    - clang                                  # [win]
-    # use flang as fortran compiler on windows (uses clang driver)
-    - flang                                  # [win]
-    # use llvm linker for both of the above
-    - lld                                    # [win]    
     # Cmake is needed to help find libraries on windows
     - cmake         # [win]
-    - llvm-openmp
+    - llvm-openmp   # [osx]
     - openblas      # [win]
   host:
     - compiler-rt                            # [win]
@@ -50,7 +47,8 @@ requirements:
     - meson
     - meson-python
     - ninja
-    - llvm-openmp
+    - ucrt           # [win]
+    - libgomp        # [linux]
   run:
     - {{ pin_compatible('numpy') }}
     - python
