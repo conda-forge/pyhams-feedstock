@@ -58,6 +58,7 @@ requirements:
     - ninja
     - libopenblas
     - m2w64-gcc-libgfortran  # [win]
+    - ucrt                   # [win]    
     #- libgomp      # [linux or win]
 
 test:
