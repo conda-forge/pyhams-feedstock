@@ -51,6 +51,7 @@ requirements:
     - meson-python
     - ninja
     #- libgomp      # [linux or win]
+    - ucrt     # [win]    
   run:
     - {{ pin_compatible('numpy') }}
     - python
