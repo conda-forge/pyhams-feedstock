@@ -22,8 +22,8 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('fortran') }}               # [not win]
-    - clang                                   # [win]
-    - flang                                   # [win]
+    - clang >=17.0                                   # [win]
+    - flang >=17.0                                   # [win]
     - lld                                     # [win]    
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     - python                                  # [build_platform != target_platform]
