@@ -1,5 +1,5 @@
 diff --git a/meson.build b/meson.build
-index 48f8309..a0d6c7a 100644
+index 48f8309..ac0b3a1 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -15,6 +15,7 @@ project(
@@ -14,23 +14,23 @@ index 48f8309..a0d6c7a 100644
  endif
  
  # Adding at project level causes many spurious -lgfortran flags.
-+if ff.has_argument('-Wno-conversion')
++if fc.has_argument('-Wno-conversion')
 +  add_project_arguments('-Wno-conversion', language: 'fortran')
 +endif
 +
  _fflags = []
  if fc.get_id() in ['intel', 'intel-llvm']
    _fflags = fc.get_supported_arguments('-qmkl')
-+  _fflags += ff.get_supported_arguments('-fp-model=strict')
++  _fflags += fc.get_supported_arguments('-fp-model=strict')
 +  minus0_arg = ['-assume', 'minus0']
-+  if ff.has_multi_arguments(minus0_arg)
++  if fc.has_multi_arguments(minus0_arg)
 +    _fflags += minus0_arg
 +  endif
  elif fc.get_id() in ['intel-cl', 'intel-llvm-cl']
    # Intel Fortran on Windows does things differently, so deal with that
    # (also specify dynamic linking and the right name mangling)
    _fflags = fc.get_supported_arguments('/qmkl')
-+  _fflags += ff.get_supported_arguments(
++  _fflags += fc.get_supported_arguments(
 +    '/fp:strict', '/MD', '/names:lowercase', '/assume:underscore',
 +    '/assume:minus0'
 +    )  
@@ -44,7 +44,7 @@ index 48f8309..a0d6c7a 100644
  
 +# Copying from scipy here
 +# Platform detection
-+is_mingw = is_windows and ff.get_id() == 'gcc'
++is_mingw = is_windows and fc.get_id() == 'gcc'
 +if is_mingw
 +  # For mingw-w64, link statically against the UCRT.
 +  gcc_link_args = ['-lucrt', '-static']
