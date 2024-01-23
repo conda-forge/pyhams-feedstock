@@ -8,8 +8,8 @@ source:
   url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
   sha256: 28d1b347a4f2ae287a87fdcec5ea69ff05d53e6cb1cfe32efdc4ca74dd21b6c7
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
-  #patches:
-  #  - meson_files.patch
+  patches:
+    - meson_files.patch
 
 build:
   number: 0
