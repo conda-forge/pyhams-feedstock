@@ -8,8 +8,8 @@ source:
   url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
   sha256: 28d1b347a4f2ae287a87fdcec5ea69ff05d53e6cb1cfe32efdc4ca74dd21b6c7
   # Download the tar-ball and do: openssl sha256 file.tar.gz to update
-  patches:
-    - meson_files.patch
+  #patches:
+  #  - meson_files.patch
 
 build:
   number: 1
@@ -37,8 +37,9 @@ requirements:
     # Cmake is needed to help find libraries on windows
     - cmake         # [win]
     - llvm-openmp   # [osx]
-    #- libgomp      # [linux or win]
-    - openblas      # [win]
+    #- libgomp      # [linux]
+    - mkl      # [win]
+    - intel-openmp      # [win]
   host:
     - cython
     - libpython        # [win]
@@ -46,19 +47,21 @@ requirements:
     - pip
     - python-build
     - numpy
-    - openblas
+    - openblas  # [not win]
+    - mkl       # [win]
     - meson
     - meson-python
     - ninja
-    #- libgomp      # [linux or win]
-    - ucrt     # [win]    
+    #- libgomp      # [linux]
+    - intel-openmp     # [win]    
   run:
     - {{ pin_compatible('numpy') }}
     - python
     - ninja
-    - libopenblas
+    - libopenblas            # [not win]
+    - mkl                    # [win]
     - m2w64-gcc-libgfortran  # [win]
-    - ucrt                   # [win]    
+    - intel-openmp           # [win]    
     #- libgomp      # [linux or win]
 
 test:

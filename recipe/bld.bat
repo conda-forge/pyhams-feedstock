@@ -15,6 +15,7 @@ set "MESON_RSP_THRESHOLD=320000"
 
 REM MinGW pkgconfig doen't find anything and gets in the way of the conda one
 del /s /q %BUILD_PREFIX%\Library\mingw-w64\bin\pkg-config*
+del /s /q %BUILD_PREFIX%\Library\mingw-w64\lib\libgomp*
 
 REM -wnx flags mean: --wheel --no-isolation --skip-dependency-check
 %PYTHON% -m build -w -n -x .
