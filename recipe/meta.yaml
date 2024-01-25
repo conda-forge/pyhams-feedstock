@@ -12,7 +12,7 @@ source:
     - meson_files.patch
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<39]
   #script:
   #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
@@ -24,16 +24,16 @@ requirements:
     - {{ compiler('fortran') }}
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     - python                                  # [build_platform != target_platform]
-    - meson-python
-    - meson
-    - ninja
-    - pkg-config
-    - numpy
-    - libflang >=17.0   # [win]
+    - meson-python                                  # [build_platform != target_platform]
+    - meson                                  # [build_platform != target_platform]
+    - ninja                                  # [build_platform != target_platform]
+    - pkg-config                                  # [build_platform != target_platform]
+    - numpy                                  # [build_platform != target_platform]
+    - libflang >=17.0                        # [win]
     # Cmake is needed to help find libraries on windows
-    - cmake         # [win]
-    - llvm-openmp   # [not linux]
-    - openblas      # [win]
+    #- cmake         # [win]
+    #- llvm-openmp   # [not linux]
+    #- openblas      # [win]
   host:
     - python
     - pip
