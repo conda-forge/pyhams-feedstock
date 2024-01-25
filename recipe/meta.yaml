@@ -22,9 +22,6 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('fortran') }}
-    #- clang >=17.0                                   # [win]
-    #- flang >=17.0                                   # [win]
-    - lld                                     # [win]    
     - cross-python_{{ target_platform }}      # [build_platform != target_platform]
     - python                                  # [build_platform != target_platform]
     - meson-python
@@ -32,6 +29,7 @@ requirements:
     - ninja
     - pkg-config
     - numpy
+    - libflang >=17.0   # [win]
     # Cmake is needed to help find libraries on windows
     - cmake         # [win]
     - llvm-openmp   # [not linux]
@@ -49,12 +47,14 @@ requirements:
     - ninja
     - ucrt           # [win]
     - libgomp        # [linux]
+    - libflang >=17.0     # [win]
   run:
     - {{ pin_compatible('numpy') }}
     - python
     - ninja
     - libopenblas
     - llvm-openmp
+    - libflang >=17.0   # [win]
 
 test:
   imports:
