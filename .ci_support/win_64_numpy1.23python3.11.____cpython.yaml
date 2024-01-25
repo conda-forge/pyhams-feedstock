@@ -1,9 +1,17 @@
 c_compiler:
-- vs2019
+- clang
+c_compiler_version:
+- '17'
 channel_sources:
 - conda-forge
 channel_targets:
 - conda-forge main
+fortran_compiler:
+- flang
+fortran_compiler_version:
+- '17'
+llvm_openmp:
+- '17'
 numpy:
 - '1.23'
 openblas:
