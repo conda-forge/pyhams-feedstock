@@ -35,8 +35,6 @@ requirements:
     - llvm-openmp   # [not linux]
     - openblas      # [win]
   host:
-    - compiler-rt                            # [win]
-    - cython
     - python
     - pip
     - python-build
@@ -45,7 +43,6 @@ requirements:
     - meson
     - meson-python
     - ninja
-    - ucrt           # [win]
     - libgomp        # [linux]
     - libflang >=17.0     # [win]
   run:
@@ -53,7 +50,7 @@ requirements:
     - python
     - ninja
     - libopenblas
-    - llvm-openmp
+    - llvm-openmp   # [not linux]
     - libflang >=17.0   # [win]
 
 test:
