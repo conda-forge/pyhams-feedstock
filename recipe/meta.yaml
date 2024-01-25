@@ -13,7 +13,9 @@ source:
 
 build:
     number: 1
-    skip: true  # [py<39]
+    skip: true  # [py<311]
+    skip: true  # [py>311]
+    skip: true  # [not win]
     #script:
     #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
     #  - {{ PYTHON }} -m pip install . --no-deps -vv
@@ -22,31 +24,21 @@ requirements:
     build:
         - python                                 # [build_platform != target_platform]
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-        - cython                                 # [build_platform != target_platform]
-        - numpy                                  # [build_platform != target_platform]
+        - meson                                  # [build_platform != target_platform]
         - meson-python                           # [build_platform != target_platform]
-        - cmake                                  # [build_platform != target_platform]
         - ninja                                  # [build_platform != target_platform]
         - pkg-config                             # [build_platform != target_platform]
-        - {{ compiler('c') }}
-        - {{ compiler('cxx') }}
+        - {{ compiler('c') }}                    # [unix]
         - {{ compiler('fortran') }}              # [unix]
         - clang                                  # [win]
         - flang                                  # [win]
         - lld                                    # [win]
     host:
         - compiler-rt                            # [win]
-        - libblas
-        - libcblas
-        - liblapack
         - python
-        - cython
         - meson-python
         - ninja
         - pkg-config
-        - python-build
-        - numpy
-        - pip
     run:
         - {{ pin_compatible('numpy') }}
         - python
