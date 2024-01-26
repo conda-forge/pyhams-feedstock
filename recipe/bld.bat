@@ -46,6 +46,6 @@ REM so use a loop; there's only one wheel in dist/ anyway
 for /f %%f in ('dir /b /S .\dist') do (
     REM need to use force to reinstall the tests the second time
     REM (otherwise pip thinks the package is installed already)
-    %PYTHON% -m pip install %%f
+    %PYTHON% -m pip install --prefix "%PREFIX%" --no-deps %%f
     if %ERRORLEVEL% neq 0 exit 1
 )

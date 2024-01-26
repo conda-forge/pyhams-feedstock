@@ -13,9 +13,7 @@ source:
 
 build:
     number: 1
-    skip: true  # [py<311]
-    skip: true  # [py>311]
-    skip: true  # [not win]
+    skip: true  # [py<39]
     #script:
     #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
     #  - {{ PYTHON }} -m pip install . --no-deps -vv
@@ -36,10 +34,12 @@ requirements:
         - lld                                    # [win]
     host:
         - compiler-rt                            # [win]
+        - llvm-openmp                            # [osx or win]
         - meson
         - meson-python
-        - mkl
-        - mkl-devel
+        - mkl                                    # [win]
+        - mkl-devel                              # [win]
+        - openblas                               # [not win]
         - ninja
         - numpy
         - pip
@@ -49,8 +49,9 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - mkl
-        - mkl-devel
+        - mkl                                    # [win]
+        - libopenblas                            # [not win]
+        - llvm-openmp                            # [osx or win]
 
 test:
     imports:
