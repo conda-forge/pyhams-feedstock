@@ -1,8 +1,16 @@
 diff --git a/meson.build b/meson.build
-index 48f8309..13eec17 100644
+index 48f8309..aaf1c9e 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -15,6 +15,7 @@ project(
+@@ -8,6 +8,7 @@ project(
+   #meson_version: '>= 0.60',
+   default_options: [
+     'buildtype=debugoptimized',
++    'b_ndebug=if-release',
+     'c_std=c11',
+   ],
+ )
+@@ -15,6 +16,7 @@ project(
  cc = meson.get_compiler('c')
  add_languages('fortran', native: false)
  fc = meson.get_compiler('fortran')
@@ -10,7 +18,7 @@ index 48f8309..13eec17 100644
  is_windows = host_machine.system() == 'windows'
  
  # We need -lm for all C code (assuming it uses math functions, which is safe to
-@@ -26,34 +27,48 @@ if m_dep.found()
+@@ -26,34 +28,42 @@ if m_dep.found()
  endif
  
  # Adding at project level causes many spurious -lgfortran flags.
@@ -34,31 +42,29 @@ index 48f8309..13eec17 100644
 +    '/fp:strict', '/MD', '/names:lowercase', '/assume:underscore',
 +    '/assume:minus0'
 +    )  
-+elif fc.get_id() in ['flang']
-+  _fflags = fc.get_supported_arguments('-Xflang -Wno-everything')
  else
    _fflags = fc.get_supported_arguments('-fdec-math')
    _fflags += fc.get_supported_arguments('-fno-align-commons')
  endif
  add_project_arguments(_fflags, language: 'fortran')
  
-+
- omp = dependency('openmp', required: false)
- if not omp.found()
+-omp = dependency('openmp', required: false)
+-if not omp.found()
 -  if fc.get_id() == 'intel'
 -    omp = declare_dependency(
 -      link_args: '-qopenmp',
 -    )
-+  if fc.get_id() in ['intel', 'intel-llvm']
-+    omp = declare_dependency(link_args: '-qopenmp')
-+  elif fc.get_id() in ['intel-cl', 'intel-llvm-cl']
-+    omp = declare_dependency(link_args: '/qopenmp')
-   else
+-  else
 -    omp = declare_dependency(
 -      link_args: '-fopenmp',
 -    )
-+    omp = declare_dependency(link_args: '-fopenmp')
-   endif
+-  endif
++if fc.get_id() in ['intel', 'intel-llvm']
++  omp = declare_dependency(link_args: '-qopenmp')
++elif fc.get_id() in ['intel-cl', 'intel-llvm-cl']
++  omp = declare_dependency(link_args: '/qopenmp')
++else
++  omp = declare_dependency(link_args: '-fopenmp')
  endif
  
  # Need lapack via OpenBlas preferably
@@ -67,3 +73,56 @@ index 48f8309..13eec17 100644
  
  # https://mesonbuild.com/Python-module.html
  # Here we differentiate from the python used by meson, py3_command, and that python target, py3_target. This is useful
+diff --git a/pyhams/meson.build b/pyhams/meson.build
+index 28280fa..9e885c4 100644
+--- a/pyhams/meson.build
++++ b/pyhams/meson.build
+@@ -11,6 +11,9 @@ if incdir_numpy == 'not-given'
+ endif
+ # this creates a raw string which is useful for Windows use of '\' for paths
+ incdir_numpy = '''@0@'''.format(incdir_numpy)
++inc_np = include_directories(incdir_numpy)
++numpy_nodepr_api = ['-DNPY_NO_DEPRECATED_API=NPY_1_9_API_VERSION']
++np_dep = declare_dependency(include_directories: inc_np, compile_args: numpy_nodepr_api)
+ 
+ #incdir_f2py = run_command(py3,
+ #    ['-c', 'import os; os.chdir(".."); import numpy.f2py; print(numpy.f2py.get_include())'],
+@@ -18,10 +21,20 @@ incdir_numpy = '''@0@'''.format(incdir_numpy)
+ #).stdout().strip()
+ 
+ incdir_f2py = incdir_numpy / '..' / '..' / 'f2py' / 'src'
+-inc_f2py = include_directories(incdir_f2py)
+ fortranobject_c = incdir_f2py / 'fortranobject.c'
++inc_f2py = include_directories(incdir_f2py)
+ 
+-inc_np = include_directories(incdir_numpy, incdir_f2py)
++# Share this object across multiple modules.
++fortranobject_lib = static_library('_fortranobject',
++  fortranobject_c,
++  c_args: numpy_nodepr_api,
++  dependencies: py3_dep,
++  include_directories: [inc_np, inc_f2py],
++)
++fortranobject_dep = declare_dependency(
++  link_with: fortranobject_lib,
++  include_directories: [inc_np, inc_f2py],
++)
+ 
+ hams_connect = custom_target('_hamsmodule.c',
+                              input : ['src/_hams.pyf'],
+@@ -54,13 +67,11 @@ hams_sources = ['src/WavDynMods.f90',
+                 'src/HAMS_Prog.f90',
+                ]
+ 
+-# Source order is important for dependencies
+ py3.extension_module('_hams',
+                      hams_sources,
+                      hams_connect,
+-                     fortranobject_c,
+-                     include_directories: inc_np,
+-                     dependencies : [py3_dep, lapack, omp],
++                     dependencies : [fortranobject_dep, lapack, omp],
++                     fortran_args: fortran_ignore_warnings,
+                      subdir: 'pyhams',
+ 		     link_language: 'fortran',
+                      install : true)
