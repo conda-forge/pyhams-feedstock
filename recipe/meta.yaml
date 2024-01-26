@@ -34,30 +34,23 @@ requirements:
         - clang                                  # [win]
         - flang                                  # [win]
         - lld                                    # [win]
-        - libblas
-        - blas
-        - liblapack
-        - lapack
+        - mkl
+        - mkl-devel
     host:
         - compiler-rt                            # [win]
-        - libblas
-        - blas
-        - liblapack
-        - lapack
         - meson-python
         - ninja
         - cmake
         - pkg-config
         - python
         - python-build
+        - mkl
+        - mkl-devel
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - liblapack
-        - lapack
-        - libblas
-        - blas
-
+        - mkl
+        - mkl-devel
 
 test:
     imports:

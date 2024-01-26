@@ -1,5 +1,5 @@
 diff --git a/meson.build b/meson.build
-index 48f8309..c94fadd 100644
+index 48f8309..13eec17 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -15,6 +15,7 @@ project(
@@ -63,7 +63,7 @@ index 48f8309..c94fadd 100644
  
  # Need lapack via OpenBlas preferably
 -lapack = dependency('openblas', 'mkl_rt', 'blas', 'lapack', required: true)
-+lapack = dependency('openblas', 'mkl', 'lapack', 'blas', required: true)
++lapack = dependency('openblas', ['mkl', 'mkl_rt', 'mkl-sdl'], 'lapack', 'blas', 'accelerate', required: true)
  
  # https://mesonbuild.com/Python-module.html
  # Here we differentiate from the python used by meson, py3_command, and that python target, py3_target. This is useful
