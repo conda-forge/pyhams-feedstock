@@ -22,27 +22,26 @@ build:
 
 requirements:
     build:
-        #- python                                 # [build_platform != target_platform]
-        #- cross-python_{{ target_platform }}     # [build_platform != target_platform]
-        #- meson                                  # [build_platform != target_platform]
-        #- meson-python                           # [build_platform != target_platform]
-        #- ninja                                  # [build_platform != target_platform]
-        #- pkg-config                             # [build_platform != target_platform]
-        #- {{ compiler('c') }}                    # [unix]
-        #- {{ compiler('fortran') }}              # [unix]
+        - python                                 # [build_platform != target_platform]
+        - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+        - meson                                  # [build_platform != target_platform]
+        - meson-python                           # [build_platform != target_platform]
+        - ninja                                  # [build_platform != target_platform]
+        - pkg-config                             # [build_platform != target_platform]
+        - {{ compiler('c') }}
+        - {{ compiler('fortran') }}              # [unix]
         - clang                                  # [win]
         - flang                                  # [win]
         - lld                                    # [win]
     host:
-        #- compiler-rt                            # [win]
+        - compiler-rt                            # [win]
         - python
         - meson-python
         - ninja
-        #- pkg-config
+        - pkg-config
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        #- ninja
         - libopenblas
 
 test:

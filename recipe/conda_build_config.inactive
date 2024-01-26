@@ -1,3 +1,5 @@
+channel_sources:                              # [win]
+  - conda-forge/label/meson_dev,conda-forge   # [win]
 c_compiler:                    # [win]
   - clang                      # [win]
 c_compiler_version:            # [win]
