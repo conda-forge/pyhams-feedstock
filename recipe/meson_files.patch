@@ -74,7 +74,7 @@ index 48f8309..aaf1c9e 100644
  # https://mesonbuild.com/Python-module.html
  # Here we differentiate from the python used by meson, py3_command, and that python target, py3_target. This is useful
 diff --git a/pyhams/meson.build b/pyhams/meson.build
-index 28280fa..9e885c4 100644
+index 28280fa..637c432 100644
 --- a/pyhams/meson.build
 +++ b/pyhams/meson.build
 @@ -11,6 +11,9 @@ if incdir_numpy == 'not-given'
@@ -110,7 +110,7 @@ index 28280fa..9e885c4 100644
  
  hams_connect = custom_target('_hamsmodule.c',
                               input : ['src/_hams.pyf'],
-@@ -54,13 +67,11 @@ hams_sources = ['src/WavDynMods.f90',
+@@ -54,13 +67,10 @@ hams_sources = ['src/WavDynMods.f90',
                  'src/HAMS_Prog.f90',
                 ]
  
@@ -122,7 +122,6 @@ index 28280fa..9e885c4 100644
 -                     include_directories: inc_np,
 -                     dependencies : [py3_dep, lapack, omp],
 +                     dependencies : [fortranobject_dep, lapack, omp],
-+                     fortran_args: fortran_ignore_warnings,
                       subdir: 'pyhams',
  		     link_language: 'fortran',
                       install : true)
