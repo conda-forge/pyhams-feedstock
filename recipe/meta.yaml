@@ -34,8 +34,7 @@ requirements:
         - lld                                    # [win]
     host:
         - compiler-rt                            # [win]
-        - llvm-openmp                            # [osx]
-        - intel-openmp                           # [win]
+        - llvm-openmp                            # [osx or win]
         - meson
         - meson-python
         - mkl                                    # [win]
@@ -52,8 +51,7 @@ requirements:
         - python
         - mkl                                    # [win]
         - libopenblas                            # [not win]
-        - llvm-openmp                            # [osx]
-        - intel-openmp                           # [win]
+        - llvm-openmp                            # [osx or win]
 
 test:
     imports:
