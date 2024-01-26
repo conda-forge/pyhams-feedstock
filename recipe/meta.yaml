@@ -38,13 +38,14 @@ requirements:
         - compiler-rt                            # [win]
         - meson
         - meson-python
+        - mkl
+        - mkl-devel
         - ninja
+        - numpy
+        - pip
         - pkg-config
         - python
         - python-build
-        - mkl
-        - mkl-devel
-        - numpy
     run:
         - {{ pin_compatible('numpy') }}
         - python
