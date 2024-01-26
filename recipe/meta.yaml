@@ -35,11 +35,12 @@ requirements:
         - lld                                    # [win]
     host:
         - compiler-rt                            # [win]
-        - python
+        - liblapack
         - meson-python
         - ninja
         - pkg-config
-        - liblapack
+        - python
+        - python-build
     run:
         - {{ pin_compatible('numpy') }}
         - python
