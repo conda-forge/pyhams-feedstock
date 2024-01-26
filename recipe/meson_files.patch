@@ -1,5 +1,5 @@
 diff --git a/meson.build b/meson.build
-index 48f8309..ac0b3a1 100644
+index 48f8309..c94fadd 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -15,6 +15,7 @@ project(
@@ -10,7 +10,7 @@ index 48f8309..ac0b3a1 100644
  is_windows = host_machine.system() == 'windows'
  
  # We need -lm for all C code (assuming it uses math functions, which is safe to
-@@ -26,29 +27,57 @@ if m_dep.found()
+@@ -26,34 +27,48 @@ if m_dep.found()
  endif
  
  # Adding at project level causes many spurious -lgfortran flags.
@@ -42,20 +42,6 @@ index 48f8309..ac0b3a1 100644
  endif
  add_project_arguments(_fflags, language: 'fortran')
  
-+# Copying from scipy here
-+# Platform detection
-+is_mingw = is_windows and fc.get_id() == 'gcc'
-+if is_mingw
-+  # For mingw-w64, link statically against the UCRT.
-+  gcc_link_args = ['-lucrt', '-static']
-+  add_project_link_arguments(gcc_link_args, language: 'fortran')
-+  # Flag needed to work around BLAS and LAPACK Gfortran dependence on
-+  # undocumented C feature when passing single character string arguments. See:
-+  #   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90329
-+  #   https://github.com/wch/r-source/blob/838f9d5a7be08f2a8c08e47bcd28756f5d0aac90/src/gnuwin32/MkRules.rules#L121
-+  add_project_arguments('-fno-optimize-sibling-calls', language: 'fortran')
-+endif
-+
 +
  omp = dependency('openmp', required: false)
  if not omp.found()
@@ -75,3 +61,9 @@ index 48f8309..ac0b3a1 100644
    endif
  endif
  
+ # Need lapack via OpenBlas preferably
+-lapack = dependency('openblas', 'mkl_rt', 'blas', 'lapack', required: true)
++lapack = dependency('openblas', 'mkl', 'lapack', 'blas', required: true)
+ 
+ # https://mesonbuild.com/Python-module.html
+ # Here we differentiate from the python used by meson, py3_command, and that python target, py3_target. This is useful

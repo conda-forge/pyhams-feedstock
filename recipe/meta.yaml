@@ -34,10 +34,14 @@ requirements:
         - clang                                  # [win]
         - flang                                  # [win]
         - lld                                    # [win]
+        - libblas
+        - blas
         - liblapack
         - lapack
     host:
         - compiler-rt                            # [win]
+        - libblas
+        - blas
         - liblapack
         - lapack
         - meson-python
@@ -51,6 +55,8 @@ requirements:
         - python
         - liblapack
         - lapack
+        - libblas
+        - blas
 
 
 test:
