@@ -39,10 +39,11 @@ requirements:
         - meson-python
         - ninja
         - pkg-config
+        - liblapack
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - libopenblas
+
 
 test:
     imports:
