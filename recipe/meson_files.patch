@@ -1,495 +1,127 @@
-diff --git a/.github/workflows/Publish_pyHAMS.yml b/.github/workflows/Publish_pyHAMS.inactive
-similarity index 73%
-rename from .github/workflows/Publish_pyHAMS.yml
-rename to .github/workflows/Publish_pyHAMS.inactive
-index d49e5b0..9235438 100644
---- a/.github/workflows/Publish_pyHAMS.yml
-+++ b/.github/workflows/Publish_pyHAMS.inactive
-@@ -3,10 +3,11 @@ name: Build and upload to PyPI
- # Build on every branch push, tag push, and pull request change:
- #on: [push, pull_request]
- # Alternatively, to publish when a (published) GitHub Release is created, use the following:
--on:
--    release:
--        types:
--            - published
-+on: [push]
-+#on:
-+#    release:
-+#        types:
-+#            - published
+diff --git a/meson.build b/meson.build
+index 48f8309..aaf1c9e 100644
+--- a/meson.build
++++ b/meson.build
+@@ -8,6 +8,7 @@ project(
+   #meson_version: '>= 0.60',
+   default_options: [
+     'buildtype=debugoptimized',
++    'b_ndebug=if-release',
+     'c_std=c11',
+   ],
+ )
+@@ -15,6 +16,7 @@ project(
+ cc = meson.get_compiler('c')
+ add_languages('fortran', native: false)
+ fc = meson.get_compiler('fortran')
++message(fc.get_id())
+ is_windows = host_machine.system() == 'windows'
  
- jobs:
-   build_wheels:
-@@ -24,24 +25,6 @@ jobs:
-       - name: Checkout
-         uses: actions/checkout@v4
+ # We need -lm for all C code (assuming it uses math functions, which is safe to
+@@ -26,34 +28,42 @@ if m_dep.found()
+ endif
  
--      - name: Windows openblas
--        if: contains( matrix.os, 'windows')
--        run: |
--            #vcpkg install openblas
--            pacman -S mingw-w64-x86_64-openblas64 mingw-w64-lapack
--            #'${{ steps.cp.outputs.python-path }}' -m pip install pylib-openblas
--                  
--      - name: Mac openblas
--        if: contains( matrix.os, 'mac')
--        run: |
--            #export PKG_CONFIG_PATH="/usr/local/opt/openblas/lib/pkgconfig:$PKG_CONFIG_PATH"
--            sudo ln -s /usr/local/opt/openblas/lib/libopenblas* /usr/local/lib/
--                  
--      - name: Linux openblas
--        if: contains( matrix.os, 'ubuntu')
--        run: |
--            sudo apt-get install libopenblas-dev
--
-       - name: Build wheels
-         uses: pypa/cibuildwheel@v2.16.2
+ # Adding at project level causes many spurious -lgfortran flags.
++if fc.has_argument('-Wno-conversion')
++  add_project_arguments('-Wno-conversion', language: 'fortran')
++endif
++
+ _fflags = []
+ if fc.get_id() in ['intel', 'intel-llvm']
+   _fflags = fc.get_supported_arguments('-qmkl')
++  _fflags += fc.get_supported_arguments('-fp-model=strict')
++  minus0_arg = ['-assume', 'minus0']
++  if fc.has_multi_arguments(minus0_arg)
++    _fflags += minus0_arg
++  endif
+ elif fc.get_id() in ['intel-cl', 'intel-llvm-cl']
+   # Intel Fortran on Windows does things differently, so deal with that
+   # (also specify dynamic linking and the right name mangling)
+   _fflags = fc.get_supported_arguments('/qmkl')
++  _fflags += fc.get_supported_arguments(
++    '/fp:strict', '/MD', '/names:lowercase', '/assume:underscore',
++    '/assume:minus0'
++    )  
+ else
+   _fflags = fc.get_supported_arguments('-fdec-math')
+   _fflags += fc.get_supported_arguments('-fno-align-commons')
+ endif
+ add_project_arguments(_fflags, language: 'fortran')
  
-diff --git a/README.md b/README.md
-index b5a7157..ee7cf63 100644
---- a/README.md
-+++ b/README.md
-@@ -6,15 +6,11 @@ There is cylinder test case that demonstrates usage and outputs in ``test/test_c
+-omp = dependency('openmp', required: false)
+-if not omp.found()
+-  if fc.get_id() == 'intel'
+-    omp = declare_dependency(
+-      link_args: '-qopenmp',
+-    )
+-  else
+-    omp = declare_dependency(
+-      link_args: '-fopenmp',
+-    )
+-  endif
++if fc.get_id() in ['intel', 'intel-llvm']
++  omp = declare_dependency(link_args: '-qopenmp')
++elif fc.get_id() in ['intel-cl', 'intel-llvm-cl']
++  omp = declare_dependency(link_args: '/qopenmp')
++else
++  omp = declare_dependency(link_args: '-fopenmp')
+ endif
  
- ## Prerequisites
+ # Need lapack via OpenBlas preferably
+-lapack = dependency('openblas', 'mkl_rt', 'blas', 'lapack', required: true)
++lapack = dependency('openblas', ['mkl', 'mkl_rt', 'mkl-sdl'], 'lapack', 'blas', 'accelerate', required: true)
  
--pyHAMS requires a Fortran compiler.  The python wrapper currently supports GNU and Intel compilers.  HAMS can be built with Flang, but that is not yet recognized by pyHAMS.
-+pyHAMS requires a Fortran compiler and OpenBLAS / MKL / LAPACK.  The python wrapper currently supports GNU and Intel compilers.  HAMS can be built with Flang, but that is not yet recognized by pyHAMS.
- 
- ## Install (as a library)
- 
--To install pyHAMS as a library that can be used by WEIS or RAFT in the backend, you can use either conda or PyPi package management:
--
--    $ pip install pyHAMS
--	
--or
-+To install pyHAMS as a library that can be used by WEIS or RAFT in the backend, conda is your best option:
- 	
-     $ conda install pyHAMS
- 
+ # https://mesonbuild.com/Python-module.html
+ # Here we differentiate from the python used by meson, py3_command, and that python target, py3_target. This is useful
 diff --git a/pyhams/meson.build b/pyhams/meson.build
-index a567087..28280fa 100644
+index 28280fa..637c432 100644
 --- a/pyhams/meson.build
 +++ b/pyhams/meson.build
-@@ -23,43 +23,42 @@ fortranobject_c = incdir_f2py / 'fortranobject.c'
+@@ -11,6 +11,9 @@ if incdir_numpy == 'not-given'
+ endif
+ # this creates a raw string which is useful for Windows use of '\' for paths
+ incdir_numpy = '''@0@'''.format(incdir_numpy)
++inc_np = include_directories(incdir_numpy)
++numpy_nodepr_api = ['-DNPY_NO_DEPRECATED_API=NPY_1_9_API_VERSION']
++np_dep = declare_dependency(include_directories: inc_np, compile_args: numpy_nodepr_api)
  
- inc_np = include_directories(incdir_numpy, incdir_f2py)
+ #incdir_f2py = run_command(py3,
+ #    ['-c', 'import os; os.chdir(".."); import numpy.f2py; print(numpy.f2py.get_include())'],
+@@ -18,10 +21,20 @@ incdir_numpy = '''@0@'''.format(incdir_numpy)
+ #).stdout().strip()
  
--#hams_connect = custom_target('_hamsmodule.c',
--#                             input : ['src/HAMS_Prog.f90'],
--#                             output : ['_hamsmodule.c', '_hams-f2pywrappers2.f90'],
--#                             command: [py3, '-m', 'numpy.f2py',
--#			               '@INPUT@', '-m', '_hams', '--lower',
--#                                       '--build-dir', 'pyhams']
--#                            )
-+hams_connect = custom_target('_hamsmodule.c',
-+                             input : ['src/_hams.pyf'],
-+                             output : ['_hamsmodule.c', '_hams-f2pywrappers2.f90'],
-+                             command: [py3, '-m', 'numpy.f2py',
-+			               '@INPUT@', '--lower', '--build-dir', 'pyhams']
-+                            )
-+
-+hams_sources = ['src/WavDynMods.f90',
-+                'src/PatclVelct.f90',
-+                'src/BodyIntgr.f90',
-+                'src/BodyIntgr_irr.f90',
-+                'src/AssbMatx.f90',    
-+                'src/AssbMatx_irr.f90',
-+                'src/SingularIntgr.f90',
-+                'src/InfGreen_Appr.f90',
-+                'src/FinGrnExtSubs.f90',
-+                'src/FinGreen3D.f90',
-+                'src/CalGreenFunc.f90',
-+                'src/HydroStatic.f90',
-+                'src/ImplementSubs.f90',
-+                'src/InputFiles.f90',
-+                'src/NormalProcess.f90',
-+                'src/ReadPanelMesh.f90',
-+                'src/PotentWavForce.f90',
-+                'src/PressureElevation.f90',
-+                'src/PrintOutput.f90',
-+                'src/SolveMotion.f90',
-+                'src/WavDynSubs.f90',
-+                'src/HAMS_Prog.f90',
-+               ]
+ incdir_f2py = incdir_numpy / '..' / '..' / 'f2py' / 'src'
+-inc_f2py = include_directories(incdir_f2py)
+ fortranobject_c = incdir_f2py / 'fortranobject.c'
++inc_f2py = include_directories(incdir_f2py)
  
- # Source order is important for dependencies
+-inc_np = include_directories(incdir_numpy, incdir_f2py)
++# Share this object across multiple modules.
++fortranobject_lib = static_library('_fortranobject',
++  fortranobject_c,
++  c_args: numpy_nodepr_api,
++  dependencies: py3_dep,
++  include_directories: [inc_np, inc_f2py],
++)
++fortranobject_dep = declare_dependency(
++  link_with: fortranobject_lib,
++  include_directories: [inc_np, inc_f2py],
++)
+ 
+ hams_connect = custom_target('_hamsmodule.c',
+                              input : ['src/_hams.pyf'],
+@@ -54,13 +67,10 @@ hams_sources = ['src/WavDynMods.f90',
+                 'src/HAMS_Prog.f90',
+                ]
+ 
+-# Source order is important for dependencies
  py3.extension_module('_hams',
--                     ['src/WavDynMods.f90',
--                     'src/PatclVelct.f90',
--                     'src/BodyIntgr.f90',
--                     'src/BodyIntgr_irr.f90',
--                     'src/AssbMatx.f90',    
--                     'src/AssbMatx_irr.f90',
--                     'src/SingularIntgr.f90',
--                     'src/InfGreen_Appr.f90',
--                     'src/FinGrnExtSubs.f90',
--                     'src/FinGreen3D.f90',
--                     'src/CalGreenFunc.f90',
--                     'src/HydroStatic.f90',
--                     'src/ImplementSubs.f90',
--                     'src/InputFiles.f90',
--                     'src/NormalProcess.f90',
--                     'src/ReadPanelMesh.f90',
--                     'src/PotentWavForce.f90',
--                     'src/PressureElevation.f90',
--                     'src/PrintOutput.f90',
--                     'src/SolveMotion.f90',
--                     'src/WavDynSubs.f90',
--                     'src/HAMS_Prog.f90',
--                     'src/_hams-f2pywrappers2.f90',
--                     'src/_hamsmodule.c',
-+                     hams_sources,
-+                     hams_connect,
-                      fortranobject_c,
--                     ],
--                     #hams_connect,
-                      include_directories: inc_np,
-                      dependencies : [py3_dep, lapack, omp],
+                      hams_sources,
+                      hams_connect,
+-                     fortranobject_c,
+-                     include_directories: inc_np,
+-                     dependencies : [py3_dep, lapack, omp],
++                     dependencies : [fortranobject_dep, lapack, omp],
                       subdir: 'pyhams',
-diff --git a/pyhams/src/_hams-f2pywrappers2.f90 b/pyhams/src/_hams-f2pywrappers2.f90
-deleted file mode 100644
-index fad01a4..0000000
---- a/pyhams/src/_hams-f2pywrappers2.f90
-+++ /dev/null
-@@ -1,12 +0,0 @@
--!     -*- f90 -*-
--!     This file is autogenerated with f2py (version:1.26.2)
--!     It contains Fortran 90 wrappers to fortran functions.
--
--      
--      subroutine f2pyinithams_full(f2pysetupfunc)
--      use hams_full, only : exec
--      external f2pysetupfunc
--      call f2pysetupfunc(exec)
--      end subroutine f2pyinithams_full
--
--
-diff --git a/pyhams/src/_hams.pyf b/pyhams/src/_hams.pyf
-new file mode 100644
-index 0000000..a20b5aa
---- /dev/null
-+++ b/pyhams/src/_hams.pyf
-@@ -0,0 +1,28 @@
-+!    -*- f90 -*-
-+! Note: the context of this file is case sensitive.
-+
-+python module _hams ! in 
-+    interface  ! in :_hams
-+        module hams_full ! in :_hams:HAMS_Prog.f90
-+            use assbmatx
-+            use assbmatx_irr
-+            use calgreenfunc
-+            use readpanelmesh
-+            use linearmatrix_mod
-+            use hydrostatic
-+            use implementsubs
-+            use potentwavforce
-+            use printoutput
-+            use potentials_mod
-+            use pressureelevation
-+            use fieldoutput_mod
-+            use omp_lib
-+            subroutine exec ! in :_hams:HAMS_Prog.f90:hams_full
-+            end subroutine exec
-+        end module hams_full
-+    end interface 
-+end python module _hams
-+
-+! This file was auto-generated with f2py (version:1.26.2).
-+! See:
-+! https://web.archive.org/web/20140822061353/http://cens.ioc.ee/projects/f2py2e
-diff --git a/pyhams/src/_hamsmodule.c b/pyhams/src/_hamsmodule.c
-deleted file mode 100644
-index 0d32744..0000000
---- a/pyhams/src/_hamsmodule.c
-+++ /dev/null
-@@ -1,273 +0,0 @@
--/* File: _hamsmodule.c
-- * This file is auto-generated with f2py (version:1.26.2).
-- * f2py is a Fortran to Python Interface Generator (FPIG), Second Edition,
-- * written by Pearu Peterson <pearu@cens.ioc.ee>.
-- * Generation date: Mon Jan  8 04:40:53 2024
-- * Do not edit this file directly unless you know what you are doing!!!
-- */
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--#ifndef PY_SSIZE_T_CLEAN
--#define PY_SSIZE_T_CLEAN
--#endif /* PY_SSIZE_T_CLEAN */
--
--/* Unconditionally included */
--#include <Python.h>
--#include <numpy/npy_os.h>
--
--/*********************** See f2py2e/cfuncs.py: includes ***********************/
--#include "fortranobject.h"
--/*need_includes0*/
--
--/**************** See f2py2e/rules.py: mod_rules['modulebody'] ****************/
--static PyObject *_hams_error;
--static PyObject *_hams_module;
--
--/*********************** See f2py2e/cfuncs.py: typedefs ***********************/
--/*need_typedefs*/
--
--/****************** See f2py2e/cfuncs.py: typedefs_generated ******************/
--/*need_typedefs_generated*/
--
--/********************** See f2py2e/cfuncs.py: cppmacros **********************/
--#ifdef DEBUGCFUNCS
--#define CFUNCSMESS(mess) fprintf(stderr,"debug-capi:"mess);
--#define CFUNCSMESSPY(mess,obj) CFUNCSMESS(mess) \
--    PyObject_Print((PyObject *)obj,stderr,Py_PRINT_RAW);\
--    fprintf(stderr,"\n");
--#else
--#define CFUNCSMESS(mess)
--#define CFUNCSMESSPY(mess,obj)
--#endif
--
--#ifndef max
--#define max(a,b) ((a > b) ? (a) : (b))
--#endif
--#ifndef min
--#define min(a,b) ((a < b) ? (a) : (b))
--#endif
--#ifndef MAX
--#define MAX(a,b) ((a > b) ? (a) : (b))
--#endif
--#ifndef MIN
--#define MIN(a,b) ((a < b) ? (a) : (b))
--#endif
--
--#if defined(PREPEND_FORTRAN)
--#if defined(NO_APPEND_FORTRAN)
--#if defined(UPPERCASE_FORTRAN)
--#define F_FUNC(f,F) _##F
--#else
--#define F_FUNC(f,F) _##f
--#endif
--#else
--#if defined(UPPERCASE_FORTRAN)
--#define F_FUNC(f,F) _##F##_
--#else
--#define F_FUNC(f,F) _##f##_
--#endif
--#endif
--#else
--#if defined(NO_APPEND_FORTRAN)
--#if defined(UPPERCASE_FORTRAN)
--#define F_FUNC(f,F) F
--#else
--#define F_FUNC(f,F) f
--#endif
--#else
--#if defined(UPPERCASE_FORTRAN)
--#define F_FUNC(f,F) F##_
--#else
--#define F_FUNC(f,F) f##_
--#endif
--#endif
--#endif
--#if defined(UNDERSCORE_G77)
--#define F_FUNC_US(f,F) F_FUNC(f##_,F##_)
--#else
--#define F_FUNC_US(f,F) F_FUNC(f,F)
--#endif
--
--
--/************************ See f2py2e/cfuncs.py: cfuncs ************************/
--/*need_cfuncs*/
--
--/********************* See f2py2e/cfuncs.py: userincludes *********************/
--/*need_userincludes*/
--
--/********************* See f2py2e/capi_rules.py: usercode *********************/
--
--
--/* See f2py2e/rules.py */
--/*eof externroutines*/
--
--/******************** See f2py2e/capi_rules.py: usercode1 ********************/
--
--
--/******************* See f2py2e/cb_rules.py: buildcallback *******************/
--/*need_callbacks*/
--
--/*********************** See f2py2e/rules.py: buildapi ***********************/
--
--/************************************ exec ************************************/
--static char doc_f2py_rout__hams_hams_full_exec[] = "\
--exec()\n\nWrapper for ``exec``.\
--\n";
--/*  */
--static PyObject *f2py_rout__hams_hams_full_exec(const PyObject *capi_self,
--                           PyObject *capi_args,
--                           PyObject *capi_keywds,
--                           void (*f2py_func)(void)) {
--    PyObject * volatile capi_buildvalue = NULL;
--    volatile int f2py_success = 1;
--/*decl*/
--
--    static char *capi_kwlist[] = {NULL};
--
--/*routdebugenter*/
--#ifdef F2PY_REPORT_ATEXIT
--f2py_start_clock();
--#endif
--    if (!PyArg_ParseTupleAndKeywords(capi_args,capi_keywds,\
--        "|:_hams.hams_full.exec",\
--        capi_kwlist))
--        return NULL;
--/*frompyobj*/
--/*end of frompyobj*/
--#ifdef F2PY_REPORT_ATEXIT
--f2py_start_call_clock();
--#endif
--/*callfortranroutine*/
--                (*f2py_func)();
--if (PyErr_Occurred())
--  f2py_success = 0;
--#ifdef F2PY_REPORT_ATEXIT
--f2py_stop_call_clock();
--#endif
--/*end of callfortranroutine*/
--        if (f2py_success) {
--/*pyobjfrom*/
--/*end of pyobjfrom*/
--        CFUNCSMESS("Building return value.\n");
--        capi_buildvalue = Py_BuildValue("");
--/*closepyobjfrom*/
--/*end of closepyobjfrom*/
--        } /*if (f2py_success) after callfortranroutine*/
--/*cleanupfrompyobj*/
--/*end of cleanupfrompyobj*/
--    if (capi_buildvalue == NULL) {
--/*routdebugfailure*/
--    } else {
--/*routdebugleave*/
--    }
--    CFUNCSMESS("Freeing memory.\n");
--/*freemem*/
--#ifdef F2PY_REPORT_ATEXIT
--f2py_stop_clock();
--#endif
--    return capi_buildvalue;
--}
--/******************************** end of exec ********************************/
--/*eof body*/
--
--/******************* See f2py2e/f90mod_rules.py: buildhooks *******************/
--
--static FortranDataDef f2py_hams_full_def[] = {
--  {"exec",-1,{{-1}},0,0,NULL,(void *)f2py_rout__hams_hams_full_exec,doc_f2py_rout__hams_hams_full_exec},
--  {NULL}
--};
--
--static void f2py_setup_hams_full(char *exec) {
--  int i_f2py=0;
--  f2py_hams_full_def[i_f2py++].data = exec;
--}
--extern void F_FUNC_US(f2pyinithams_full,F2PYINITHAMS_FULL)(void (*)(char *));
--static void f2py_init_hams_full(void) {
--  F_FUNC_US(f2pyinithams_full,F2PYINITHAMS_FULL)(f2py_setup_hams_full);
--}
--
--/*need_f90modhooks*/
--
--/************** See f2py2e/rules.py: module_rules['modulebody'] **************/
--
--/******************* See f2py2e/common_rules.py: buildhooks *******************/
--
--/*need_commonhooks*/
--
--/**************************** See f2py2e/rules.py ****************************/
--
--static FortranDataDef f2py_routine_defs[] = {
--
--/*eof routine_defs*/
--    {NULL}
--};
--
--static PyMethodDef f2py_module_methods[] = {
--
--    {NULL,NULL}
--};
--
--static struct PyModuleDef moduledef = {
--    PyModuleDef_HEAD_INIT,
--    "_hams",
--    NULL,
--    -1,
--    f2py_module_methods,
--    NULL,
--    NULL,
--    NULL,
--    NULL
--};
--
--PyMODINIT_FUNC PyInit__hams(void) {
--    int i;
--    PyObject *m,*d, *s, *tmp;
--    m = _hams_module = PyModule_Create(&moduledef);
--    Py_SET_TYPE(&PyFortran_Type, &PyType_Type);
--    import_array();
--    if (PyErr_Occurred())
--        {PyErr_SetString(PyExc_ImportError, "can't initialize module _hams (failed to import numpy)"); return m;}
--    d = PyModule_GetDict(m);
--    s = PyUnicode_FromString("1.26.2");
--    PyDict_SetItemString(d, "__version__", s);
--    Py_DECREF(s);
--    s = PyUnicode_FromString(
--        "This module '_hams' is auto-generated with f2py (version:1.26.2).\nFunctions:\n"
--"Fortran 90/95 modules:\n""  hams_full --- exec()"".");
--    PyDict_SetItemString(d, "__doc__", s);
--    Py_DECREF(s);
--    s = PyUnicode_FromString("1.26.2");
--    PyDict_SetItemString(d, "__f2py_numpy_version__", s);
--    Py_DECREF(s);
--    _hams_error = PyErr_NewException ("_hams.error", NULL, NULL);
--    /*
--     * Store the error object inside the dict, so that it could get deallocated.
--     * (in practice, this is a module, so it likely will not and cannot.)
--     */
--    PyDict_SetItemString(d, "__hams_error", _hams_error);
--    Py_DECREF(_hams_error);
--    for(i=0;f2py_routine_defs[i].name!=NULL;i++) {
--        tmp = PyFortranObject_NewAsAttr(&f2py_routine_defs[i]);
--        PyDict_SetItemString(d, f2py_routine_defs[i].name, tmp);
--        Py_DECREF(tmp);
--    }
--
--/*eof initf2pywraphooks*/
--  PyDict_SetItemString(d, "hams_full", PyFortranObject_New(f2py_hams_full_def,f2py_init_hams_full));
--/*eof initf90modhooks*/
--
--/*eof initcommonhooks*/
--
--
--#ifdef F2PY_REPORT_ATEXIT
--    if (! PyErr_Occurred())
--        on_exit(f2py_report_on_exit,(void*)"_hams");
--#endif
--    return m;
--}
--#ifdef __cplusplus
--}
--#endif
-diff --git a/pyproject.toml b/pyproject.toml
-index f23f83c..2c30d10 100644
---- a/pyproject.toml
-+++ b/pyproject.toml
-@@ -134,3 +134,9 @@ atomic = true
- [tool.cibuildwheel]
- skip = ["cp36-*", "cp37-*", "cp38-*", "*win*"]
- build-frontend = "build"
-+
-+[tool.cibuildwheel.linux]
-+before-all = "yum install -y lapack lapack-devel blas blas-devel lapack64 lapack64-devel blas64 blas64-devel"
-+
-+[tool.cibuildwheel.macos]
-+before-all = "brew install openblas"
+ 		     link_language: 'fortran',
+                      install : true)

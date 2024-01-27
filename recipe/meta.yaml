@@ -1,86 +1,80 @@
 {% set version = "1.2.6" %}
 
 package:
-  name: pyhams
-  version: {{ version }}
+    name: pyhams
+    version: {{ version }}
 
 source:
-  url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
-  sha256: 28d1b347a4f2ae287a87fdcec5ea69ff05d53e6cb1cfe32efdc4ca74dd21b6c7
-  # Download the tar-ball and do: openssl sha256 file.tar.gz to update
-  #patches:
-  #  - meson_files.patch
+    url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
+    sha256: 28d1b347a4f2ae287a87fdcec5ea69ff05d53e6cb1cfe32efdc4ca74dd21b6c7
+    # Download the tar-ball and do: openssl sha256 file.tar.gz to update
+    patches:
+        - meson_files.patch
 
 build:
-  number: 0
-  skip: true  # [py<39]
-  #script:
-  #  - del /s /q {{ BUILD_PREFIX }}\Library\mingw-w64\bin\pkg-config*  # [win]
-  #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
-  #  - {{ PYTHON }} -m pip install . --no-deps -vv
+    number: 1
+    skip: true  # [py<39]
+    #script:
+    #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
+    #  - {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
-  build:
-    - {{ compiler('c') }}    # [not win]
-    - {{ compiler('fortran') }}
-    # This brings in the whole m2w64-toolchain, including m2w64-pkgconfig that doesn't
-    # find the right libraries compared to the regular conda version.  See above script
-    # addition to "remove" the m2w64 pkg-config before installing
-    - {{ compiler('m2w64_c') }}         # [win]
-    - cross-python_{{ target_platform }}      # [build_platform != target_platform]
-    - python                                  # [build_platform != target_platform]
-    - meson-python
-    - meson
-    - ninja
-    - pkg-config
-    - numpy
-    # Cmake is needed to help find libraries on windows
-    - cmake         # [win]
-    - llvm-openmp   # [osx]
-    #- libgomp      # [linux or win]
-    - openblas      # [win]
-  host:
-    - cython
-    - libpython        # [win]
-    - python
-    - pip
-    - python-build
-    - numpy
-    - openblas
-    - meson
-    - meson-python
-    - ninja
-    #- libgomp      # [linux or win]
-  run:
-    - {{ pin_compatible('numpy') }}
-    - python
-    - ninja
-    - libopenblas
-    - m2w64-gcc-libgfortran  # [win]
-    #- libgomp      # [linux or win]
+    build:
+        - python                                 # [build_platform != target_platform]
+        - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+        - meson                                  # [build_platform != target_platform]
+        - meson-python                           # [build_platform != target_platform]
+        - ninja                                  # [build_platform != target_platform]
+        - numpy                                  # [build_platform != target_platform]
+        - pkg-config                             # [build_platform != target_platform]
+        - {{ compiler('c') }}
+        - {{ compiler('fortran') }}              # [unix]
+        - clang                                  # [win]
+        - flang                                  # [win]
+        - lld                                    # [win]
+    host:
+        - compiler-rt                            # [win]
+        - llvm-openmp                            # [osx or win]
+        - meson
+        - meson-python
+        - mkl                                    # [win]
+        - mkl-devel                              # [win]
+        - openblas                               # [not win]
+        - ninja
+        - numpy
+        - pip
+        - pkg-config
+        - python
+        - python-build
+    run:
+        - {{ pin_compatible('numpy') }}
+        - python
+        - mkl                                    # [win]
+        - libopenblas                            # [not win]
+        - llvm-openmp                            # [osx or win]
 
 test:
-  imports:
-    - pyhams
-    - pyhams.pyhams
-  requires:
-    - pytest
-  source_files:
-    - test  # [ not win ]
-  commands:
-    - "cd test; pytest .; cd ..;"  # [ not win ]
+    imports:
+        - pyhams
+        - pyhams.pyhams
+    requires:
+        - pytest
+    source_files:
+        - test  # [ not win ]
+    commands:
+        - "cd test; pytest .; cd ..;"  # [ not win ]
 
 
 about:
-  home: https://github.com/WISDEM/pyHAMS
-  license: Apache-2.0
-  license_file: LICENSE
-  summary: Python module wrapping around HAMS
-  dev_url: https://github.com/WISDEM/pyHAMS
-
+    home: https://github.com/WISDEM/pyHAMS
+    license: Apache-2.0
+    license_file: LICENSE
+    summary: Python module wrapping around HAMS
+    dev_url: https://github.com/WISDEM/pyHAMS
+    
 extra:
-  recipe-maintainers:
-    - mattEhall
-    - dzalkind
-    - gbarter
-    - lucas-carmo
+    recipe-maintainers:
+        - mattEhall
+        - dzalkind
+        - gbarter
+        - lucas-carmo
