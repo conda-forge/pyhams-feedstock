@@ -34,9 +34,10 @@ requirements:
         - lld                                    # [win]
     host:
         - compiler-rt                            # [win]
-        - llvm-openmp                            # [osx or win]
         - meson
         - meson-python
+        - llvm-openmp                            # [osx or win]
+        - libgomp                                # [linux]        
         - mkl                                    # [win]
         - mkl-devel                              # [win]
         - openblas                               # [not win]
@@ -49,9 +50,7 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - mkl                                    # [win]
-        - libopenblas                            # [not win]
-        - llvm-openmp                            # [osx or win]
+
 
 test:
     imports:
