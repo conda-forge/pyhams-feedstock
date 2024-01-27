@@ -12,7 +12,7 @@ source:
         - meson_files.patch
 
 build:
-    number: 1
+    number: 2
     skip: true  # [py<39]
     #script:
     #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
@@ -34,9 +34,10 @@ requirements:
         - lld                                    # [win]
     host:
         - compiler-rt                            # [win]
-        - llvm-openmp                            # [osx or win]
         - meson
         - meson-python
+        - llvm-openmp                            # [osx or win]
+        - libgomp                                # [linux]        
         - mkl                                    # [win]
         - mkl-devel                              # [win]
         - openblas                               # [not win]
@@ -49,9 +50,7 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - mkl                                    # [win]
-        - libopenblas                            # [not win]
-        - llvm-openmp                            # [osx or win]
+
 
 test:
     imports:
