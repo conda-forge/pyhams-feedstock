@@ -30,18 +30,16 @@ requirements:
         - {{ stdlib('c') }}
         - {{ compiler('c') }}
         - {{ compiler('fortran') }}
-        #- clang <18                              # [win]
-        #- flang <18                              # [win]
-        #- lld <18                                # [win]
     host:
         - compiler-rt                            # [win]
         - meson
         - meson-python
         - llvm-openmp                            # [osx or win]
         - libgomp                                # [linux]        
-        #- mkl                                    # [win]
-        #- mkl-devel                              # [win]
-        - openblas
+        - mkl                                    # [win]
+        - mkl-devel                              # [win]
+        # OpenBLAS on windows uses flang5 for some reason, so need mkl instead
+        - openblas                               # [not win]
         - ninja
         - numpy
         - pip
@@ -51,8 +49,7 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - llvm-openmp                            # [osx or win]
-        - libgomp                                # [linux]        
+        - llvm-openmp                            # [win]
 
 
 test:
