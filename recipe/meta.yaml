@@ -29,16 +29,16 @@ requirements:
         - pkg-config                             # [build_platform != target_platform]
         - {{ stdlib('c') }}
         - {{ compiler('c') }}
-        - {{ compiler('fortran') }}              # [unix]
-        - clang <18                              # [win]
-        - flang <18                              # [win]
-        - lld <18                                # [win]
+        - {{ compiler('fortran') }}
+        #- clang <18                              # [win]
+        #- flang <18                              # [win]
+        #- lld <18                                # [win]
     host:
         - compiler-rt                            # [win]
         - meson
         - meson-python
-        - llvm-openmp                            # [osx]
-        - libgomp                                # [linux or win]        
+        - llvm-openmp                            # [osx or win]
+        - libgomp                                # [linux]        
         - mkl                                    # [win]
         - mkl-devel                              # [win]
         - openblas                               # [not win]
@@ -51,6 +51,8 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
+        - llvm-openmp                            # [osx or win]
+        - libgomp                                # [linux]        
 
 
 test:
