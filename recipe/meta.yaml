@@ -12,7 +12,7 @@ source:
         - meson_files.patch
 
 build:
-    number: 2
+    number: 3
     skip: true  # [py<39]
     #script:
     #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
@@ -27,11 +27,9 @@ requirements:
         - ninja                                  # [build_platform != target_platform]
         - numpy                                  # [build_platform != target_platform]
         - pkg-config                             # [build_platform != target_platform]
+        - {{ stdlib('c') }}
         - {{ compiler('c') }}
-        - {{ compiler('fortran') }}              # [unix]
-        - clang                                  # [win]
-        - flang                                  # [win]
-        - lld                                    # [win]
+        - {{ compiler('fortran') }}
     host:
         - compiler-rt                            # [win]
         - meson
@@ -40,6 +38,7 @@ requirements:
         - libgomp                                # [linux]        
         - mkl                                    # [win]
         - mkl-devel                              # [win]
+        # OpenBLAS on windows uses flang5 for some reason, so need mkl instead
         - openblas                               # [not win]
         - ninja
         - numpy
@@ -50,6 +49,7 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
+        - llvm-openmp                            # [win]
 
 
 test:
