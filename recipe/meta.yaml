@@ -39,9 +39,9 @@ requirements:
         - meson-python
         - llvm-openmp                            # [osx or win]
         - libgomp                                # [linux]        
-        - mkl                                    # [win]
-        - mkl-devel                              # [win]
-        - openblas                               # [not win]
+        #- mkl                                    # [win]
+        #- mkl-devel                              # [win]
+        - openblas
         - ninja
         - numpy
         - pip
