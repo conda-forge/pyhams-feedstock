@@ -30,9 +30,9 @@ requirements:
         - {{ stdlib('c') }}
         - {{ compiler('c') }}
         - {{ compiler('fortran') }}              # [unix]
-        - clang<18                               # [win]
-        - flang<18                               # [win]
-        - lld<18                                 # [win]
+        - clang <18                              # [win]
+        - flang <18                              # [win]
+        - lld <18                                # [win]
     host:
         - compiler-rt                            # [win]
         - meson
