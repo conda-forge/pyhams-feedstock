@@ -40,8 +40,7 @@ requirements:
         # OpenBLAS on windows uses flang5 for some reason, so need mkl instead, but mkl brings intel-openmp which clashes with llvm-openmp
         # See https://github.com/conda-forge/scipy-feedstock/issues/257
         # See https://github.com/conda-forge/impactx-feedstock/blob/main/recipe/meta.yaml
-        - openblas                               # [not win]
-        #- blis                                   # [win]
+        - {{ blas_impl }}
         - ninja
         - nomkl                                  # [win]
         - numpy
@@ -54,6 +53,8 @@ requirements:
         - python
         - llvm-openmp                            # [win]
         - nomkl                                  # [win]
+        - {{ blas_impl }}
+        - libblas =*=*{{ blas_impl }}
 
 test:
     imports:
