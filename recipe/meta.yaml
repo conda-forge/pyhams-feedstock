@@ -62,8 +62,16 @@ test:
         - pytest
     source_files:
         - test
+        - test/Cylinder
+        - test/Cylinder/Input
+        - test/Cylinder/truth
+        - test/Cylinder_headings
+        - test/Cylinder_headings/Input
+        - test/Cylinder_headings/truth
     commands:
-        - "cd test; pytest .; cd ..;"
+        - cd test
+        - pytest .
+        - cd ..
 
 
 about:
