@@ -41,7 +41,7 @@ requirements:
         # See https://github.com/conda-forge/scipy-feedstock/issues/257
         # See https://github.com/conda-forge/impactx-feedstock/blob/main/recipe/meta.yaml
         - openblas                               # [not win]
-        - blis                                   # [win]
+        #- blis                                   # [win]
         - ninja
         - nomkl                                  # [win]
         - numpy
