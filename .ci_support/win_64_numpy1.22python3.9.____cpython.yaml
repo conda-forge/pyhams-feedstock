@@ -1,3 +1,5 @@
+blas_impl:
+- blis
 c_compiler:
 - vs2019
 c_stdlib:
