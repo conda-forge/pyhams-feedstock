@@ -37,9 +37,6 @@ requirements:
         - meson-python
         - llvm-openmp                            # [osx or win]
         - libgomp                                # [linux]        
-        # OpenBLAS on windows uses flang5 for some reason, so need mkl instead, but mkl brings intel-openmp which clashes with llvm-openmp
-        # See https://github.com/conda-forge/scipy-feedstock/issues/257
-        # See https://github.com/conda-forge/impactx-feedstock/blob/main/recipe/meta.yaml
         - {{ blas_impl }}
         - ninja
         - nomkl                                  # [win]
@@ -55,6 +52,7 @@ requirements:
         - nomkl                                  # [win]
         - {{ blas_impl }}
         - libblas =*=*{{ blas_impl }}
+        - liblapack                              # [ win ]
 
 test:
     imports:
