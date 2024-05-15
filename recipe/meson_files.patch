@@ -69,7 +69,7 @@ index 48f8309..aaf1c9e 100644
  
  # Need lapack via OpenBlas preferably
 -lapack = dependency('openblas', 'mkl_rt', 'blas', 'lapack', required: true)
-+lapack = dependency('blis', 'openblas', ['mkl', 'mkl_rt', 'mkl-sdl'], 'lapack', 'blas', 'accelerate', required: true)
++lapack = dependency('openblas', ['mkl', 'mkl_rt', 'mkl-sdl'], 'lapack', 'blas', 'accelerate', required: true)
  
  # https://mesonbuild.com/Python-module.html
  # Here we differentiate from the python used by meson, py3_command, and that python target, py3_target. This is useful
