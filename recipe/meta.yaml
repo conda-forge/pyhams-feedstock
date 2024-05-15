@@ -25,6 +25,7 @@ requirements:
         - meson                                  # [build_platform != target_platform]
         - meson-python                           # [build_platform != target_platform]
         - ninja                                  # [build_platform != target_platform]
+        - nomkl                                  # [build_platform != target_platform]
         - numpy                                  # [build_platform != target_platform]
         - pkg-config                             # [build_platform != target_platform]
         - {{ stdlib('c') }}
@@ -40,9 +41,9 @@ requirements:
         # See https://github.com/conda-forge/scipy-feedstock/issues/257
         # See https://github.com/conda-forge/impactx-feedstock/blob/main/recipe/meta.yaml
         - openblas                               # [not win]
-        - libblas =*=*blis                       # [win]
-        #- libblas =*=*netlib                     # [win]
+        - blis                                   # [win]
         - ninja
+        - nomkl                                  # [win]
         - numpy
         - pip
         - pkg-config
@@ -52,9 +53,7 @@ requirements:
         - {{ pin_compatible('numpy') }}
         - python
         - llvm-openmp                            # [win]
-        - libblas =*=*blis                       # [win]
-        #- libblas =*=*netlib                     # [win]
-
+        - nomkl                                  # [win]
 
 test:
     imports:
