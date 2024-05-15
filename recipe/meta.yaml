@@ -48,7 +48,7 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - llvm-openmp                            # [win]
+        - llvm-openmp < 18                       # [win]
         - nomkl                                  # [win]
         - {{ blas_impl }}
         - libblas =*=*{{ blas_impl }}
