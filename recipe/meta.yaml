@@ -32,10 +32,10 @@ requirements:
         - {{ compiler('c') }}
         - {{ compiler('fortran') }}
     host:
-        - compiler-rt                            # [win]
+        - compiler-rt <18                           # [win]
         - meson
         - meson-python
-        - llvm-openmp                            # [osx or win]
+        - llvm-openmp                      # [osx or win]
         - libgomp                                # [linux]        
         - {{ blas_impl }}
         - ninja
@@ -48,7 +48,7 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - llvm-openmp <18                        # [win]
+        - llvm-openmp                      # [osx or win]
         - nomkl                                  # [win]
         - {{ blas_impl }}
         - libblas =*=*{{ blas_impl }}
