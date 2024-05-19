@@ -32,9 +32,8 @@ requirements:
         - {{ compiler('fortran') }}              # [not win]
         - clang                                  # [win]
         - flang <18                              # [win]
-        - lld                                    # [win]
     host:
-        - compiler-rt <18                        # [win]
+        #- compiler-rt <18                        # [win]
         - meson-python
         - llvm-openmp                            # [osx or win]
         - libgomp                                # [linux]        
