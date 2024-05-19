@@ -12,4 +12,4 @@ blas_impl:
     - openblas    # [ not win ]
     - blis        # [ win ]
 llvm_openmp:      # [osx or win]
-    - 17
+    - 17          # [osx or win]

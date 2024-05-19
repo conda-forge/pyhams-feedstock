@@ -30,12 +30,15 @@ requirements:
         - pkg-config                             # [build_platform != target_platform]
         - {{ stdlib('c') }}
         - {{ compiler('c') }}
-        - {{ compiler('fortran') }}
+        - {{ compiler('fortran') }}              # [not win]
+        - clang                                  # [win]
+        - flang <18                              # [win]
+        - lld                                    # [win]
     host:
-        - compiler-rt <18                           # [win]
+        - compiler-rt <18                        # [win]
         - meson
         - meson-python
-        - llvm-openmp                      # [osx or win]
+        - llvm-openmp                            # [osx or win]
         - libgomp                                # [linux]        
         - {{ blas_impl }}
         - ninja
@@ -48,7 +51,7 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - llvm-openmp                      # [osx or win]
+        #- llvm-openmp                            # [osx or win]
         - nomkl                                  # [win]
         - {{ blas_impl }}
         - libblas =*=*{{ blas_impl }}
