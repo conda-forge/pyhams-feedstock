@@ -37,6 +37,9 @@ REM see explanation here:
 REM https://github.com/conda-forge/scipy-feedstock/pull/253#issuecomment-1732578945
 set "MESON_RSP_THRESHOLD=320000"
 
+REM MinGW pkgconfig doen't find anything and gets in the way of the conda one
+del /s /q %BUILD_PREFIX%\Library\mingw-w64\bin\pkg-config*
+
 %PYTHON% -m pip install --prefix "%PREFIX%" --no-deps --no-build-isolation . -vv
 REM -wnx flags mean: --wheel --no-isolation --skip-dependency-check
 REM %PYTHON% -m build -w -n -x .
