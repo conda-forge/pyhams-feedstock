@@ -1,8 +1,8 @@
 #!/bin/bash
 set -ex
 
-export PIP_NO_BUILD_ISOLATION=True
-export PIP_NO_DEPENDENCIES=True
+#export PIP_NO_BUILD_ISOLATION=True
+#export PIP_NO_DEPENDENCIES=True
 #export PIP_IGNORE_INSTALLED=True
 #export PIP_NO_INDEX=True
 #export PYTHONDONTWRITEBYTECODE=True
@@ -20,4 +20,4 @@ MESON_ARGS_REDUCED="$(echo $MESON_ARGS | sed 's/--buildtype release //g')"
 # -wnx flags mean: --wheel --no-isolation --skip-dependency-check
 $PYTHON -m build -w -n -x -Csetup-args=${MESON_ARGS_REDUCED// / -Csetup-args=} || (cat build/meson-logs/meson-log.txt && exit 1)
 
-$PYTHON -m pip install dist/py*.whl
+$PYTHON -m pip install --no-deps --no-build-isolation dist/py*.whl

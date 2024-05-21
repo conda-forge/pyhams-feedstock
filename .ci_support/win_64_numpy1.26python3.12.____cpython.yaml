@@ -1,15 +1,15 @@
-c_compiler:
-- vs2019
-c_stdlib:
-- vs
+blas_impl:
+- blis
 channel_sources:
 - conda-forge/label/meson_dev,conda-forge
 channel_targets:
 - conda-forge main
-mkl:
-- '2023'
-mkl_devel:
-- '2023'
+llvm_openmp:
+- '17'
+m2w64_c_compiler:
+- m2w64-toolchain
+m2w64_fortran_compiler:
+- m2w64-toolchain
 numpy:
 - '1.26'
 pin_run_as_build:

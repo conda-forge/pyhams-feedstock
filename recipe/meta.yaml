@@ -12,7 +12,7 @@ source:
         - meson_files.patch
 
 build:
-    number: 3
+    number: 4
     skip: true  # [py<39]
     #script:
     #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
@@ -20,27 +20,29 @@ build:
 
 requirements:
     build:
+        - {{ stdlib("c") }}                      # [not win]
+        - {{ compiler('c') }}                    # [not win]
+        - {{ compiler('fortran') }}              # [not win]
+        - {{ compiler('m2w64_c') }}              # [win]
+        - {{ compiler('m2w64_fortran') }}        # [win]
         - python                                 # [build_platform != target_platform]
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
         - meson                                  # [build_platform != target_platform]
         - meson-python                           # [build_platform != target_platform]
         - ninja                                  # [build_platform != target_platform]
+        - nomkl                                  # [build_platform != target_platform]
         - numpy                                  # [build_platform != target_platform]
         - pkg-config                             # [build_platform != target_platform]
-        - {{ stdlib('c') }}
-        - {{ compiler('c') }}
-        - {{ compiler('fortran') }}
     host:
-        - compiler-rt                            # [win]
+        #- compiler-rt <18                        # [win]
+        - libpython                              # [win]
         - meson
         - meson-python
         - llvm-openmp                            # [osx or win]
         - libgomp                                # [linux]        
-        - mkl                                    # [win]
-        - mkl-devel                              # [win]
-        # OpenBLAS on windows uses flang5 for some reason, so need mkl instead
-        - openblas                               # [not win]
+        - {{ blas_impl }}
         - ninja
+        - nomkl                                  # [win]
         - numpy
         - pip
         - pkg-config
@@ -49,8 +51,11 @@ requirements:
     run:
         - {{ pin_compatible('numpy') }}
         - python
-        - llvm-openmp                            # [win]
-
+        #- llvm-openmp                            # [osx or win]
+        - nomkl                                  # [win]
+        - {{ blas_impl }}
+        - libblas =*=*{{ blas_impl }}
+        - liblapack                              # [ win ]
 
 test:
     imports:
@@ -59,9 +64,17 @@ test:
     requires:
         - pytest
     source_files:
-        - test  # [ not win ]
+        - test
+        - test/Cylinder
+        - test/Cylinder/Input
+        - test/Cylinder/truth
+        - test/Cylinder_headings
+        - test/Cylinder_headings/Input
+        - test/Cylinder_headings/truth
     commands:
-        - "cd test; pytest .; cd ..;"  # [ not win ]
+        - cd test
+        - pytest .
+        - cd ..
 
 
 about:
