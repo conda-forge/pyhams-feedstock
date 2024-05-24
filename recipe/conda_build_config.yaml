@@ -8,8 +8,8 @@ channel_sources:                              # [win]
 # See https://github.com/conda-forge/scipy-feedstock/issues/257
 # See https://github.com/conda-forge/impactx-feedstock/blob/main/recipe/meta.yaml
 # https://conda-forge.org/docs/maintainer/knowledge_base/#blas
-blas_impl:
-    - openblas    # [ not win ]
-    - blis        # [ win ]
-llvm_openmp:      # [osx or win]
-    - 17          # [osx or win]
+#blas_impl:
+#    - openblas    # [ not win ]
+#    - blis        # [ win ]
+#llvm_openmp:      # [osx or win]
+#    - 17          # [osx or win]
