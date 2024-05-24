@@ -2,8 +2,6 @@ MACOSX_DEPLOYMENT_TARGET:
 - '11.0'
 MACOSX_SDK_VERSION:
 - '11.0'
-blas_impl:
-- openblas
 c_compiler:
 - clang
 c_compiler_version:
@@ -21,7 +19,7 @@ fortran_compiler:
 fortran_compiler_version:
 - '12'
 llvm_openmp:
-- '17'
+- '16'
 macos_machine:
 - arm64-apple-darwin20.0.0
 numpy:
