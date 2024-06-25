@@ -12,7 +12,7 @@ source:
         - meson_files.patch
 
 build:
-    number: 0
+    number: 1
     skip: true  # [py<39]
     #script:
     #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
@@ -51,7 +51,6 @@ requirements:
         - pip
         - setuptools
     run:
-        - {{ pin_compatible('numpy') }}
         - python
         - nomkl                                  # [win]
 
