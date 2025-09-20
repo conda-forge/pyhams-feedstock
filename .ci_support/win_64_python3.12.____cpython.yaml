@@ -1,5 +1,5 @@
 channel_sources:
-- conda-forge/label/meson_dev,conda-forge
+- conda-forge
 channel_targets:
 - conda-forge main
 m2w64_c_compiler:
