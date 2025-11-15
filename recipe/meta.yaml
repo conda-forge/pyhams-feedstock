@@ -12,7 +12,7 @@ source:
     #    - meson_files.patch
 
 build:
-    number: 0
+    number: 1
     skip: true  # [py<39]
     #script:
     #  - echo "python = '${PREFIX}/bin/python'" >> ${BUILD_PREFIX}/meson_cross_file.txt  # [build_platform != target_platform]
@@ -20,11 +20,9 @@ build:
 
 requirements:
     build:
-        - {{ stdlib("c") }}                      # [not win]
-        - {{ compiler('c') }}                    # [not win]
-        - {{ compiler('fortran') }}              # [not win]
-        - {{ compiler('m2w64_c') }}              # [win]
-        - {{ compiler('m2w64_fortran') }}        # [win]
+        - {{ stdlib("c") }}
+        - {{ compiler("c") }}
+        - {{ compiler("fortran") }}
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
         - python                                 # [build_platform != target_platform]
         - meson                                  # [build_platform != target_platform]
@@ -40,7 +38,7 @@ requirements:
         - libpython                              # [win]
         - cython
         - llvm-openmp                            # [osx or win]
-        - libgomp                                # [linux]        
+        - libgomp                                # [linux]
         - meson
         #- meson-python
         - numpy
@@ -80,7 +78,7 @@ about:
     license_file: LICENSE
     summary: Python module wrapping around HAMS
     dev_url: https://github.com/WISDEM/pyHAMS
-    
+
 extra:
     recipe-maintainers:
         - mattEhall
