@@ -10,7 +10,7 @@ package:
     version: ${{ version }}
 
 source:
-    url: https://github.com/WISDEM/pyHAMS/archive/v{{ version }}.tar.gz
+    url: https://github.com/NLRWindSystems/pyHAMS/archive/v${{ version }}.tar.gz
     sha256: 84c4d51df3383c596cd66646a6283cfb75f0afa283f434e5a7ae418f0efbb251
 
 build:
