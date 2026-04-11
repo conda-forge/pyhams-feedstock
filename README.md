@@ -13,8 +13,7 @@ Development: https://github.com/NLRWindSystems/pyHAMS
 
 Documentation: https://github.com/NLRWindSystems/pyHAMS
 
-pyHAMS is a python wrapper for HAMS, a boundary element method for hydrodynamic
-analysis of submerged structures.
+pyHAMS is a python wrapper for HAMS, a boundary element method for hydrodynamic analysis of submerged structures.
 
 Current build status
 ====================
