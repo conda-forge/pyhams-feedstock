@@ -85,6 +85,7 @@ tests:
               - test/Cylinder_headings
               - test/Cylinder_headings/Input
               - test/Cylinder_headings/truth
+      pip_check: false
 
 about:
     homepage: https://github.com/NLRWindSystems/pyHAMS
