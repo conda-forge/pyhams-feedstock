@@ -3,13 +3,18 @@ About pyhams-feedstock
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/pyhams-feedstock/blob/main/LICENSE.txt)
 
-Home: https://github.com/WISDEM/pyHAMS
+Home: https://github.com/NLRWindSystems/pyHAMS
 
 Package license: Apache-2.0
 
 Summary: Python module wrapping around HAMS
 
-Development: https://github.com/WISDEM/pyHAMS
+Development: https://github.com/NLRWindSystems/pyHAMS
+
+Documentation: https://github.com/NLRWindSystems/pyHAMS
+
+pyHAMS is a python wrapper for HAMS, a boundary element method for hydrodynamic
+analysis of submerged structures.
 
 Current build status
 ====================
