@@ -29,15 +29,10 @@ requirements:
         - pkg-config
         - wheel
         - python-build
-    - if: not win
-      then:
-        - ${{ stdlib('c') }}
-        - ${{ compiler('c') }}
-        - ${{ compiler('fortran') }}
-    - if: win
-      then:
-        - ${{ compiler('m2w64_fortran') }}
-        - ${{ compiler('m2w64_c') }}
+    # uses m2w64 toolchain on windows, see conda_build_config.yaml
+    - ${{ stdlib("c") }}
+    - ${{ compiler("c") }}
+    - ${{ compiler("fortran") }}
   host:
     - cython
     - meson
