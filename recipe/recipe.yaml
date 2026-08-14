@@ -44,7 +44,7 @@ requirements:
     - setuptools
     - if: win
       then:
-        - libpython
+        - distutils-activate-mingw
         - nomkl
     - if: win or osx
       then:
