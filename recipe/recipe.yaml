@@ -3,7 +3,7 @@ schema_version: 1
 context:
   name: pyhams
   version: "1.3.1"
-  build_number: 5
+  build_number: 6
 
 package:
   name: ${{ name }}
@@ -52,7 +52,7 @@ requirements:
     - if: linux
       then:
         - libgomp
-    
+
   run:
     - if: win
       then: nomkl
