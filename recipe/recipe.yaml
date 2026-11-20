@@ -26,7 +26,7 @@ requirements:
         - ninja
         - numpy
         - nomkl
-        - pkg-config
+        - pkgconf
         - wheel
         - python-build
     # uses m2w64 toolchain on windows, see conda_build_config.yaml
@@ -37,7 +37,7 @@ requirements:
     - cython
     - meson
     - numpy
-    - pkg-config
+    - pkgconf
     - python
     - python-build
     - pip
